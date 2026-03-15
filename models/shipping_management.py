@@ -95,3 +95,7 @@ class ShippingManagement(models.Model):
         """ Opcional: Para permitir correcciones si el admin lo requiere, aunque el requisito dice 'solo lectura' """
         # Se incluye para facilitar pruebas, en producción se puede ocultar con permisos
         self.write({'state': 'draft'})
+
+    def action_dummy(self):
+        """ Método dummy para los Smart Buttons que son solo informativos """
+        pass

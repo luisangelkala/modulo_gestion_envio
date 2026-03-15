@@ -1,106 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Action: Etiquetas -->
-    <record id="action_report_shipping_labels" model="ir.actions.report">
-        <field name="name">Etiquetas de Bulto (QR)</field>
-        <field name="model">shipping.management</field>
-        <field name="report_type">qweb-pdf</field>
-        <field name="report_name">modulo_gestion_envio.report_shipping_labels</field>
-        <field name="report_file">modulo_gestion_envio.report_shipping_labels</field>
-        <field name="print_report_name">'Etiquetas - %s' % object.name</field>
-        <field name="binding_model_id" ref="model_shipping_management"/>
-        <field name="binding_type">report</field>
-    </record>
+    <data>
+        <!-- Action: Etiquetas -->
+        <record id="action_report_shipping_labels" model="ir.actions.report">
+            <field name="name">Etiquetas de Bulto (QR)</field>
+            <field name="model">shipping.management</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">modulo_gestion_envio.report_shipping_labels</field>
+            <field name="report_file">modulo_gestion_envio.report_shipping_labels</field>
+            <field name="print_report_name">'Etiquetas - %s' % object.name</field>
+            <field name="binding_model_id" ref="model_shipping_management"/>
+            <field name="binding_type">report</field>
+        </record>
 
-    <!-- Action: HBL -->
-    <record id="action_report_shipping_hbl" model="ir.actions.report">
-        <field name="name">HBL (3 Copias)</field>
-        <field name="model">shipping.management</field>
-        <field name="report_type">qweb-pdf</field>
-        <field name="report_name">modulo_gestion_envio.report_shipping_hbl</field>
-        <field name="report_file">modulo_gestion_envio.report_shipping_hbl</field>
-        <field name="print_report_name">'HBL - %s' % object.name</field>
-        <field name="binding_model_id" ref="model_shipping_management"/>
-        <field name="binding_type">report</field>
-    </record>
+        <!-- Action: HBL -->
+        <record id="action_report_shipping_hbl" model="ir.actions.report">
+            <field name="name">HBL (3 Copias)</field>
+            <field name="model">shipping.management</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">modulo_gestion_envio.report_shipping_hbl</field>
+            <field name="report_file">modulo_gestion_envio.report_shipping_hbl</field>
+            <field name="print_report_name">'HBL - %s' % object.name</field>
+            <field name="binding_model_id" ref="model_shipping_management"/>
+            <field name="binding_type">report</field>
+        </record>
 
-    <!-- Template: Etiquetas -->
-    <template id="report_shipping_labels">
-        <t t-call="web.basic_layout">
-            <div class="page">
+        <!-- Template: Etiquetas -->
+        <template id="report_shipping_labels">
+            <t t-call="web.basic_layout">
+                <div class="page">
+                    <t t-foreach="docs" t-as="o">
+                        <t t-foreach="o.line_ids" t-as="line">
+                            <div style="page-break-after: always; border: 2px solid black; padding: 15px; text-align: center; margin: 10px;">
+                                <h3>REF: <span t-field="o.name"/></h3>
+                                <div style="margin: 20px 0;">
+                                    <!-- Generación de QR usando el endpoint nativo de Odoo -->
+                                    <img t-att-src="'/report/barcode/?barcode_type=QR&amp;value=%s&amp;width=200&amp;height=200' % o.name" style="width:200px;height:200px"/>
+                                </div>
+                                <strong>Bulto ID:</strong> <span t-field="line.package_code"/><br/>
+                                <strong>Cliente:</strong> <span t-field="line.partner_id.name"/><br/>
+                                <strong>Destino:</strong> <span t-field="line.partner_id.city"/>, <span t-field="line.partner_id.country_id.code"/>
+                            </div>
+                        </t>
+                    </t>
+                </div>
+            </t>
+        </template>
+
+        <!-- Template: HBL -->
+        <template id="report_shipping_hbl">
+            <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
                     <t t-foreach="o.line_ids" t-as="line">
-                        <div style="page-break-after: always; border: 2px solid black; padding: 15px; text-align: center; margin: 10px;">
-                            <h3>REF: <span t-field="o.name"/></h3>
-                            <div style="margin: 20px 0;">
-                                <!-- Generación de QR usando el endpoint nativo de Odoo -->
-                                <img t-att-src="'/report/barcode/?barcode_type=QR&amp;value=%s&amp;width=200&amp;height=200' % o.name" style="width:200px;height:200px"/>
+                        <!-- Loop para 3 copias -->
+                        <t t-foreach="[1, 2, 3]" t-as="copy_idx">
+                            <!-- Contenedor optimizado: 48% alto para caber 2 por A4 -->
+                            <div class="article" t-att-style="'position: relative; height: 48vh; border: 1px solid #333; margin-bottom: 1vh; padding: 10px; box-sizing: border-box; page-break-inside: avoid; ' + ('page-break-after: always;' if copy_idx % 2 == 0 and copy_idx != 3 else '')">
+                                
+                                <div class="row">
+                                    <div class="col-6">
+                                        <h4>HOUSE BILL OF LADING</h4>
+                                        <small>Copy <t t-esc="copy_idx"/>/3</small>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <h3><span t-field="o.name"/></h3>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <div class="row mt-2">
+                                    <div class="col-6">
+                                        <strong>Shipper:</strong><br/>
+                                        [Nombre de tu Empresa]<br/>
+                                        Logistics Dept.
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>Consignee:</strong><br/>
+                                        <span t-field="line.partner_id.name"/><br/>
+                                        <span t-field="line.partner_id.street"/><br/>
+                                        <span t-field="line.partner_id.city"/>
+                                    </div>
+                                </div>
+                                
+                                <table class="table table-sm table-bordered mt-4">
+                                    <thead>
+                                        <tr><th>Package Code</th><th>Dims (L*W*H)</th><th>Vol (m³)</th><th>Weight (Kg)</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span t-field="line.package_code"/></td>
+                                            <td><span t-field="line.length"/> x <span t-field="line.width"/> x <span t-field="line.height"/></td>
+                                            <td><span t-field="line.volume"/></td>
+                                            <td><span t-field="line.weight"/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
-                            <strong>Bulto ID:</strong> <span t-field="line.package_code"/><br/>
-                            <strong>Cliente:</strong> <span t-field="line.partner_id.name"/><br/>
-                            <strong>Destino:</strong> <span t-field="line.partner_id.city"/>, <span t-field="line.partner_id.country_id.code"/>
-                        </div>
+                            <!-- Si es la 2da copia, forzamos salto de página para que la 3ra quede en hoja nueva (o flujo continuo) -->
+                            <!-- La lógica CSS arriba maneja el salto si copy_idx % 2 == 0 -->
+                        </t>
+                        <!-- Salto de página forzado al terminar las 3 copias de un bulto para separar del siguiente -->
+                        <div style="page-break-after: always;"></div>
                     </t>
-                </t>
-            </div>
-        </t>
-    </template>
-
-    <!-- Template: HBL -->
-    <template id="report_shipping_hbl">
-        <t t-call="web.html_container">
-            <t t-foreach="docs" t-as="o">
-                <t t-foreach="o.line_ids" t-as="line">
-                    <!-- Loop para 3 copias -->
-                    <t t-foreach="[1, 2, 3]" t-as="copy_idx">
-                        <!-- Contenedor optimizado: 48% alto para caber 2 por A4 -->
-                        <div class="article" t-att-style="'position: relative; height: 48vh; border: 1px solid #333; margin-bottom: 1vh; padding: 10px; box-sizing: border-box; page-break-inside: avoid; ' + ('page-break-after: always;' if copy_idx % 2 == 0 and copy_idx != 3 else '')">
-                            
-                            <div class="row">
-                                <div class="col-6">
-                                    <h4>HOUSE BILL OF LADING</h4>
-                                    <small>Copy <t t-esc="copy_idx"/>/3</small>
-                                </div>
-                                <div class="col-6 text-end">
-                                    <h3><span t-field="o.name"/></h3>
-                                </div>
-                            </div>
-                            <hr/>
-                            <div class="row mt-2">
-                                <div class="col-6">
-                                    <strong>Shipper:</strong><br/>
-                                    [Nombre de tu Empresa]<br/>
-                                    Logistics Dept.
-                                </div>
-                                <div class="col-6">
-                                    <strong>Consignee:</strong><br/>
-                                    <span t-field="line.partner_id.name"/><br/>
-                                    <span t-field="line.partner_id.street"/><br/>
-                                    <span t-field="line.partner_id.city"/>
-                                </div>
-                            </div>
-                            
-                            <table class="table table-sm table-bordered mt-4">
-                                <thead>
-                                    <tr><th>Package Code</th><th>Dims (L*W*H)</th><th>Vol (m³)</th><th>Weight (Kg)</th></tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td><span t-field="line.package_code"/></td>
-                                        <td><span t-field="line.length"/> x <span t-field="line.width"/> x <span t-field="line.height"/></td>
-                                        <td><span t-field="line.volume"/></td>
-                                        <td><span t-field="line.weight"/></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- Si es la 2da copia, forzamos salto de página para que la 3ra quede en hoja nueva (o flujo continuo) -->
-                        <!-- La lógica CSS arriba maneja el salto si copy_idx % 2 == 0 -->
-                    </t>
-                    <!-- Salto de página forzado al terminar las 3 copias de un bulto para separar del siguiente -->
-                    <div style="page-break-after: always;"></div>
                 </t>
             </t>
-        </t>
-    </template>
+        </template>
+    </data>
 </odoo>
