@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_shipping_container_type_user,shipping.container.type user,model_shipping_container_type,base.group_user,1,0,0,0
+access_shipping_container_type_manager,shipping.container.type manager,model_shipping_container_type,group_shipping_manager,1,1,1,1
+access_shipping_management_traffic,shipping.management traffic,model_shipping_management,group_shipping_traffic,1,0,0,0
+access_shipping_management_manager,shipping.management manager,model_shipping_management,group_shipping_manager,1,1,1,1
+access_shipping_management_line_traffic,shipping.management.line traffic,model_shipping_management_line,group_shipping_traffic,1,1,1,1
+access_shipping_management_line_manager,shipping.management.line manager,model_shipping_management_line,group_shipping_manager,1,1,1,1
