@@ -1,28 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <record id="view_shipping_container_type_tree" model="ir.ui.view">
-            <field name="name">shipping.container.type.tree</field>
-            <field name="model">shipping.container.type</field>
-            <field name="arch" type="xml">
-                <tree editable="bottom">
-                    <field name="name"/>
-                    <field name="capacity_m3"/>
-                    <field name="capacity_kg"/>
-                    <field name="length"/>
-                    <field name="width"/>
-                    <field name="height"/>
-                </tree>
-            </field>
-        </record>
+    <record id="view_shipping_container_type_tree" model="ir.ui.view">
+        <field name="name">shipping.container.type.tree</field>
+        <field name="model">shipping.container.type</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="name"/>
+                <field name="capacity_m3"/>
+                <field name="capacity_kg"/>
+                <field name="length"/>
+                <field name="width"/>
+                <field name="height"/>
+            </tree>
+        </field>
+    </record>
 
-        <action id="action_shipping_container_type" model="ir.actions.act_window">
-            <field name="name">Tipos de Contenedor</field>
-            <field name="res_model">shipping.container.type</field>
-            <field name="view_mode">tree</field>
-        </action>
+    <action id="action_shipping_container_type" model="ir.actions.act_window">
+        <field name="name">Tipos de Contenedor</field>
+        <field name="res_model">shipping.container.type</field>
+        <field name="view_mode">tree</field>
+    </action>
 
-        <menuitem id="menu_shipping_config" parent="menu_shipping_root" name="Configuración" sequence="20"/>
-        <menuitem id="menu_shipping_container_type" parent="menu_shipping_config" action="action_shipping_container_type"/>
-    </data>
+    <menuitem id="menu_shipping_config" parent="menu_shipping_root" name="Configuración" sequence="20"/>
+    <menuitem id="menu_shipping_container_type" parent="menu_shipping_config" action="action_shipping_container_type"/>
 </odoo>
