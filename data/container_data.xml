@@ -1,23 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo noupdate="1">
-    <record id="container_20st" model="shipping.container.type">
-        <field name="name">20ST</field>
-        <field name="capacity_m3">33.2</field>
-        <field name="capacity_kg">25000</field>
-    </record>
-    <record id="container_40st" model="shipping.container.type">
-        <field name="name">40ST</field>
-        <field name="capacity_m3">67.7</field>
-        <field name="capacity_kg">28500</field>
-    </record>
-    <record id="container_40hc" model="shipping.container.type">
-        <field name="name">40HC</field>
-        <field name="capacity_m3">76.4</field>
-        <field name="capacity_kg">28500</field>
-    </record>
-    <record id="container_45hc" model="shipping.container.type">
-        <field name="name">45HC</field>
-        <field name="capacity_m3">86.0</field>
-        <field name="capacity_kg">29600</field>
-    </record>
+<odoo>
+    <data noupdate="1">
+        <record id="container_20st" model="shipping.container.type">
+            <field name="name">20ST</field>
+            <field name="capacity_m3">33.2</field>
+            <field name="capacity_kg">25000</field>
+        </record>
+        <record id="container_40st" model="shipping.container.type">
+            <field name="name">40ST</field>
+            <field name="capacity_m3">67.7</field>
+            <field name="capacity_kg">28500</field>
+        </record>
+        <record id="container_40hc" model="shipping.container.type">
+            <field name="name">40HC</field>
+            <field name="capacity_m3">76.4</field>
+            <field name="capacity_kg">28500</field>
+        </record>
+        <record id="container_45hc" model="shipping.container.type">
+            <field name="name">45HC</field>
+            <field name="capacity_m3">86.0</field>
+            <field name="capacity_kg">29600</field>
+        </record>
+    </data>
 </odoo>
