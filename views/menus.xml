@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <menuitem id="menu_shipping_root" 
-              name="Logística" 
+              name="Gestión de Envio" 
               web_icon="modulo_gestion_envio,static/description/icon.png" 
               sequence="10"/>
 

@@ -17,8 +17,7 @@
         'views/menus.xml',
         'views/shipping_management_views.xml', 
         'views/container_type_views.xml',
-        # TERCERO: Los reportes (déjalos comentados si aún no hemos aplicado la solución del Error #003)
-        # 'report/shipping_reports.xml',
+        'report/shipping_reports.xml',
     ],
     'application': True,
     'installable': True,
