@@ -20,78 +20,43 @@
                         </button>
                     </div>
                     <div class="oe_title">
-                        <h1>
-                            <field name="name" readonly="1"/>
-                        </h1>
+                        <h1><field name="name" readonly="1"/></h1>
                     </div>
                     <group>
                         <group>
-                            <field name="carrier" readonly="state == 'confirmed'"/>
                             <field name="transport_type" widget="radio" readonly="state == 'confirmed'"/>
-                        </group>
-                        <group>
                             <field name="container_type_id" invisible="transport_type != 'sea'" 
                                    required="transport_type == 'sea'" readonly="state == 'confirmed'"/>
                         </group>
+                        <group>
+                            <field name="date_shipping" readonly="state == 'confirmed'"/>
+                            <field name="carrier" readonly="state == 'confirmed'"/>
+                        </group>
                     </group>
                     <notebook>
-                        <page string="Detalle de Bultos">
+                        <page string="Líneas de Carga" name="lines">
                             <field name="line_ids" readonly="state == 'confirmed'">
                                 <tree editable="bottom">
                                     <field name="partner_id"/>
+                                    <field name="package_code" readonly="1"/>
                                     <field name="length"/>
                                     <field name="width"/>
                                     <field name="height"/>
-                                    <field name="volume" readonly="1"/>
-                                    <field name="weight"/>
-                                    <field name="package_code" readonly="1"/>
-                                    <button name="copy_line" type="object" icon="fa-copy" title="Duplicar Línea"/>
+                                    <field name="volume" sum="Total Vol"/>
+                                    <field name="weight" sum="Total Peso"/>
+                                    <button name="action_duplicate_line" type="object" icon="fa-copy" title="Duplicar Línea"/>
                                 </tree>
                             </field>
                         </page>
                     </notebook>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
             </form>
         </field>
     </record>
 
-    <record id="view_shipping_management_tree" model="ir.ui.view">
-        <field name="name">shipping.management.tree</field>
-        <field name="model">shipping.management</field>
-        <field name="arch" type="xml">
-            <tree string="Gestión de Envíos">
-                <field name="name"/>
-                <field name="carrier"/>
-                <field name="transport_type"/>
-                <field name="total_packages" sum="Total Bultos"/>
-                <field name="total_weight" sum="Total Peso"/>
-                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'confirmed'"/>
-            </tree>
-        </field>
-    </record>
-
-    <record id="view_shipping_management_search" model="ir.ui.view">
-        <field name="name">shipping.management.search</field>
-        <field name="model">shipping.management</field>
-        <field name="arch" type="xml">
-            <search>
-                <field name="name"/>
-                <field name="carrier"/>
-                <filter string="Aéreo" name="air" domain="[('transport_type', '=', 'air')]"/>
-                <filter string="Marítimo" name="sea" domain="[('transport_type', '=', 'sea')]"/>
-                <separator/>
-                <filter string="Borrador" name="draft" domain="[('state', '=', 'draft')]"/>
-                <filter string="Confirmado" name="confirmed" domain="[('state', '=', 'confirmed')]"/>
-            </search>
-        </field>
-    </record>
-
-    <record id="action_shipping_management" model="ir.actions.act_window">
-        <field name="name">Gestión de Envíos</field>
-        <field name="res_model">shipping.management</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
-    <menuitem id="menu_shipping_root" name="Logística" web_icon="modulo_gestion_envio,static/description/icon.png"/>
-    <menuitem id="menu_shipping_management" parent="menu_shipping_root" action="action_shipping_management" sequence="10"/>
-</odoo>
+    </odoo>
