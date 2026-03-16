@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_shipping_root" 
+              name="Logística" 
+              web_icon="modulo_gestion_envio,static/description/icon.png" 
+              sequence="10"/>
+
+    <menuitem id="menu_shipping_config" 
+              parent="menu_shipping_root" 
+              name="Configuración" 
+              sequence="20"/>
+</odoo>

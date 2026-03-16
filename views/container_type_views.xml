@@ -21,6 +21,6 @@
         <field name="view_mode">tree</field>
     </record>
 
-    <menuitem id="menu_shipping_config" parent="menu_shipping_root" name="Configuración" sequence="20"/>
-    <menuitem id="menu_shipping_container_type" parent="menu_shipping_config" action="action_shipping_container_type"/>
+    <menuitem id="menu_shipping_container_type" parent="menu_shipping_config" action="action_shipping_container_type" sequence="10"/>
+</odoo>
 </odoo>
