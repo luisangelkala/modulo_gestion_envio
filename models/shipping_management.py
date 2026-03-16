@@ -40,13 +40,13 @@ class ShippingManagement(models.Model):
     total_volume = fields.Float(string='Volumen Total (m³)', compute='_compute_smart_stats', store=True)
     unique_client_count = fields.Integer(string='Total Clientes', compute='_compute_smart_stats', store=True)
 
-    @api.depends('line_ids', 'line_ids.weight', 'line_ids.volume', 'line_ids.partner_id')
+    @api.depends('line_ids.weight', 'line_ids.volume', 'line_ids.sender_id', 'line_ids.packages_qty')
     def _compute_smart_stats(self):
         for rec in self:
-            rec.total_packages = len(rec.line_ids)
+            rec.total_packages = sum(line.packages_qty for line in rec.line_ids)
             rec.total_weight = sum(line.weight for line in rec.line_ids)
             rec.total_volume = sum(line.volume for line in rec.line_ids)
-            rec.unique_client_count = len(rec.line_ids.mapped('partner_id'))
+            rec.unique_client_count = len(rec.line_ids.mapped('sender_id'))
 
     def write(self, vals):
         # Bloqueo estricto de edición si el registro está confirmado
@@ -61,6 +61,13 @@ class ShippingManagement(models.Model):
         self.ensure_one()
         # Validaciones de Reglas de Negocio
         self._check_capacity_rules()
+
+        # Asignación de Secuencia SOLO al confirmar
+        for line in self.line_ids:
+            if not line.package_code or line.package_code == 'Borrador':
+                # Genera: 246-11-XXXXX
+                line.package_code = self.env['ir.sequence'].next_by_code('shipping.management') or _('N/A')
+
         self.write({'state': 'confirmed'})
 
     def _check_capacity_rules(self):

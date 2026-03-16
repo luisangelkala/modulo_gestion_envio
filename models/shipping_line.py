@@ -6,12 +6,16 @@ class ShippingManagementLine(models.Model):
 
     shipping_id = fields.Many2one('shipping.management', string='Envío', ondelete='cascade')
     
-    # Si el cliente no existe, el widget Many2one permite crearlo.
-    # Para forzar creación automática sin popup, se requiere personalización JS o un campo Char intermedio.
-    # Usamos la mejor práctica de Odoo: Many2one permite "Crear y Editar" o "Crear 'Nombre'" nativamente.
-    partner_id = fields.Many2one('res.partner', string='Cliente', required=True)
+    # Reemplazo de partner_id por remitente y destinatario
+    sender_id = fields.Many2one('res.partner', string='Remitente', required=True)
+    receiver_id = fields.Many2one('res.partner', string='Destinatario', required=True)
     
-    package_code = fields.Char(string='Código Paquete', help="Código único del bulto")
+    # Código de bulto con valor temporal. Se asigna al confirmar el envío.
+    package_code = fields.Char(string='Código Paquete', default='Borrador', readonly=True, copy=False)
+    
+    # Nuevos campos de detalle de carga
+    description = fields.Char(string='Mercancía')
+    packages_qty = fields.Integer(string='Cantidad Bultos', default=1)
     
     # Dimensiones
     length = fields.Float(string='Largo (m)', default=0.0)
@@ -26,17 +30,12 @@ class ShippingManagementLine(models.Model):
         for line in self:
             line.volume = line.length * line.width * line.height
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        for vals in vals_list:
-            if not vals.get('package_code'):
-                vals['package_code'] = self.env['ir.sequence'].next_by_code('shipping.management')
-        return super().create(vals_list)
+    # Se elimina el método create para que la secuencia se asigne solo al confirmar.
 
     def action_duplicate_line(self):
         """ Botón para duplicar la línea actual """
         self.ensure_one()
         self.copy({
             'shipping_id': self.shipping_id.id,
-            'package_code': False # Resetear código para evitar duplicados si es único
+            # El package_code se reseteará a su default 'Borrador' al no ser copiado (copy=False).
         })

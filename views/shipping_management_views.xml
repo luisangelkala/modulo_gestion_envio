@@ -13,11 +13,17 @@
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box">
+                        <button name="action_dummy" type="object" class="oe_stat_button" icon="fa-users">
+                            <field name="unique_client_count" widget="statinfo" string="Clientes"/>
+                        </button>
                         <button name="action_dummy" type="object" class="oe_stat_button" icon="fa-cubes">
                             <field name="total_packages" widget="statinfo" string="Bultos"/>
                         </button>
                         <button name="action_dummy" type="object" class="oe_stat_button" icon="fa-balance-scale">
                             <field name="total_weight" widget="statinfo" string="Kg Total"/>
+                        </button>
+                        <button name="action_dummy" type="object" class="oe_stat_button" icon="fa-cube">
+                            <field name="total_volume" widget="statinfo" string="m³ Total"/>
                         </button>
                     </div>
                     <div class="oe_title">
@@ -41,16 +47,41 @@
                     <notebook>
                         <page string="Líneas de Carga" name="lines">
                             <field name="line_ids" readonly="state == 'confirmed'">
-                                <tree editable="bottom">
-                                    <field name="partner_id"/>
-                                    <field name="package_code" readonly="1"/>
-                                    <field name="length"/>
-                                    <field name="width"/>
-                                    <field name="height"/>
-                                    <field name="volume" sum="Total Vol"/>
+                                <!-- Vista de Lista (resumen) -->
+                                <tree>
+                                    <field name="package_code"/>
+                                    <field name="sender_id"/>
+                                    <field name="receiver_id"/>
+                                    <field name="description"/>
+                                    <field name="packages_qty" sum="Total Bultos"/>
                                     <field name="weight" sum="Total Peso"/>
+                                    <field name="volume" sum="Total Volumen"/>
                                     <button name="action_duplicate_line" type="object" icon="fa-copy" title="Duplicar Línea"/>
                                 </tree>
+                                <!-- Vista de Formulario (popup modal) -->
+                                <form>
+                                    <sheet>
+                                        <group>
+                                            <group string="Contactos">
+                                                <field name="sender_id" required="1"/>
+                                                <field name="receiver_id" required="1"/>
+                                            </group>
+                                            <group string="Detalle de Carga">
+                                                <field name="package_code"/>
+                                                <field name="description"/>
+                                                <field name="packages_qty"/>
+                                            </group>
+                                        </group>
+                                        <group string="Dimensiones y Peso">
+                                            <group>
+                                                <field name="length"/>
+                                                <field name="width"/>
+                                                <field name="height"/>
+                                            </group>
+                                            <group><field name="weight"/><field name="volume" readonly="1"/></group>
+                                        </group>
+                                    </sheet>
+                                </form>
                             </field>
                         </page>
                     </notebook>
