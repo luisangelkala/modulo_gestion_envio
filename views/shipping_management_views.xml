@@ -7,7 +7,8 @@
             <form string="Gestión de Envío">
                 <header>
                     <button name="action_confirm" string="Confirmar" type="object" class="oe_highlight" 
-                            invisible="state != 'draft'" groups="modulo_gestion_envio.group_shipping_manager"/>
+                            invisible="state != 'draft'" groups="modulo_gestion_envio.group_shipping_manager"
+                            confirm="¿Está seguro que desea confirmar este envío? Esta acción es irreversible."/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirmed"/>
                 </header>
                 <sheet>
@@ -20,15 +21,19 @@
                         </button>
                     </div>
                     <div class="oe_title">
-                        <h1><field name="name" readonly="1"/></h1>
+                        <h1><field name="name" placeholder="Referencia (Ej: GUIA-001)"/></h1>
                     </div>
                     <group>
                         <group>
+                            <field name="agencia_origen" readonly="state == 'confirmed'"/>
+                            <field name="pais_id" readonly="state == 'confirmed'"/>
                             <field name="transport_type" widget="radio" readonly="state == 'confirmed'"/>
                             <field name="container_type_id" invisible="transport_type != 'sea'" 
                                    required="transport_type == 'sea'" readonly="state == 'confirmed'"/>
                         </group>
                         <group>
+                            <field name="consignatario_id" readonly="state == 'confirmed'"/>
+                            <field name="awb" readonly="state == 'confirmed'"/>
                             <field name="date_shipping" readonly="state == 'confirmed'"/>
                             <field name="carrier" readonly="state == 'confirmed'"/>
                         </group>

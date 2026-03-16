@@ -26,6 +26,13 @@ class ShippingManagementLine(models.Model):
         for line in self:
             line.volume = line.length * line.width * line.height
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get('package_code'):
+                vals['package_code'] = self.env['ir.sequence'].next_by_code('shipping.management')
+        return super().create(vals_list)
+
     def action_duplicate_line(self):
         """ Botón para duplicar la línea actual """
         self.ensure_one()

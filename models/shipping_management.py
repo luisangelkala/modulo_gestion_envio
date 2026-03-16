@@ -7,7 +7,7 @@ class ShippingManagement(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'id desc'
 
-    name = fields.Char(string='Referencia', required=True, copy=False, readonly=True, default=lambda self: _('Nuevo'))
+    name = fields.Char(string='Referencia', required=True, copy=False, tracking=True)
     state = fields.Selection([
         ('draft', 'Borrador'),
         ('confirmed', 'Confirmado')
@@ -20,11 +20,17 @@ class ShippingManagement(models.Model):
 
     date_shipping = fields.Date(string='Fecha de Envío', default=fields.Date.context_today, tracking=True)
     
+    # Campos operativos (Excel)
+    agencia_origen = fields.Char(string='Agencia de Origen', tracking=True)
+    pais_id = fields.Many2one('res.country', string='País', tracking=True)
+    consignatario_id = fields.Many2one('res.partner', string='Consignatario', tracking=True)
+    awb = fields.Char(string='AWB / BL / Contenedor', tracking=True)
+
     # Campos readonly en estado confirmado
     container_type_id = fields.Many2one('shipping.container.type', string='Contenedor', 
         readonly=False) 
     
-    carrier = fields.Char(string='Naviera/Aerolínea', tracking=True)
+    carrier = fields.Char(string='Naviera / Aerolínea', tracking=True)
 
     line_ids = fields.One2many('shipping.management.line', 'shipping_id', string='Líneas de Envío')
 
@@ -41,13 +47,6 @@ class ShippingManagement(models.Model):
             rec.total_weight = sum(line.weight for line in rec.line_ids)
             rec.total_volume = sum(line.volume for line in rec.line_ids)
             rec.unique_client_count = len(rec.line_ids.mapped('partner_id'))
-
-    @api.model_create_multi
-    def create(self, vals_list):
-        for vals in vals_list:
-            if vals.get('name', _('Nuevo')) == _('Nuevo'):
-                vals['name'] = self.env['ir.sequence'].next_by_code('shipping.management') or _('Nuevo')
-        return super().create(vals_list)
 
     def write(self, vals):
         # Bloqueo estricto de edición si el registro está confirmado
