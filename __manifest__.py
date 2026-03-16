@@ -14,7 +14,7 @@
         'security/ir.model.access.csv',
         'data/sequence.xml',
         'data/container_data.xml',
-        'views/menus.xml'
+        'views/menus.xml',
         'views/shipping_management_views.xml', 
         'views/container_type_views.xml',
         # TERCERO: Los reportes (déjalos comentados si aún no hemos aplicado la solución del Error #003)
