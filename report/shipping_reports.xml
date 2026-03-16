@@ -25,6 +25,16 @@
             <field name="binding_type">report</field>
         </record>
 
+        <!-- Action: Manifiesto de Carga (BL) - Sin Binding para evitar Error #003 -->
+        <record id="action_report_shipping_bl" model="ir.actions.report">
+            <field name="name">Manifiesto de Carga (BL)</field>
+            <field name="model">shipping.management</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">modulo_gestion_envio.template_report_shipping_bl</field>
+            <field name="report_file">modulo_gestion_envio.template_report_shipping_bl</field>
+            <field name="print_report_name">'Manifiesto - %s' % object.name</field>
+        </record>
+
         <!-- Template: Etiquetas -->
         <template id="report_shipping_labels">
             <t t-call="web.basic_layout">
@@ -100,6 +110,75 @@
                         </t>
                         <!-- Salto de página forzado al terminar las 3 copias de un bulto para separar del siguiente -->
                         <div style="page-break-after: always;"></div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <!-- Template: Manifiesto de Carga (BL) -->
+        <template id="template_report_shipping_bl">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <!-- Cabecera del Manifiesto -->
+                            <div class="row mb-4 text-center border-bottom pb-2">
+                                <div class="col-12">
+                                    <h2>MANIFIESTO DE CARGA</h2>
+                                    <h4>Ref: <span t-field="o.name"/></h4>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-6">
+                                    <strong>Agencia Origen:</strong> <span t-field="o.agencia_origen"/><br/>
+                                    <strong>País Destino:</strong> <span t-field="o.pais_id.name"/><br/>
+                                    <strong>Fecha Salida:</strong> <span t-field="o.date_shipping"/>
+                                </div>
+                                <div class="col-6 text-end">
+                                    <strong>Consignatario:</strong> <span t-field="o.consignatario_id.name"/><br/>
+                                    <strong>AWB / Contenedor:</strong> <span t-field="o.awb"/><br/>
+                                    <strong>Transporte:</strong> <span t-field="o.transport_type"/>
+                                </div>
+                            </div>
+
+                            <!-- Tabla de Detalles -->
+                            <table class="table table-sm table-striped table-bordered mt-3">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Remitente</th>
+                                        <th>Destinatario</th>
+                                        <th>Mercancía</th>
+                                        <th class="text-end">Cant.</th>
+                                        <th class="text-end">Peso</th>
+                                        <th class="text-end">Vol</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="o.line_ids" t-as="line">
+                                        <td><span t-field="line.package_code"/></td>
+                                        <td><span t-field="line.sender_id.name"/> <span t-if="line.sender_id.vat" class="text-muted">(<span t-field="line.sender_id.vat"/>)</span></td>
+                                        <td>
+                                            <span t-field="line.receiver_id.name"/><br/>
+                                            <small class="text-muted"><span t-field="line.receiver_id.street"/>, <span t-field="line.receiver_id.city"/></small>
+                                        </td>
+                                        <td><span t-field="line.description"/></td>
+                                        <td class="text-end"><span t-field="line.packages_qty"/></td>
+                                        <td class="text-end"><span t-field="line.weight"/></td>
+                                        <td class="text-end"><span t-field="line.volume" t-options='{"widget": "float", "precision": 3}'/></td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr class="fw-bold table-active">
+                                        <td colspan="4" class="text-end">TOTALES:</td>
+                                        <td class="text-end"><span t-field="o.total_packages"/></td>
+                                        <td class="text-end"><span t-field="o.total_weight"/></td>
+                                        <td class="text-end"><span t-field="o.total_volume" t-options='{"widget": "float", "precision": 3}'/></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </t>
                 </t>
             </t>

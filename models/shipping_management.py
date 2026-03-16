@@ -105,3 +105,8 @@ class ShippingManagement(models.Model):
     def action_dummy(self):
         """ Método dummy para los Smart Buttons que son solo informativos """
         pass
+
+    def action_print_bl(self):
+        """ Retorna la acción para imprimir el BL, abriendo el PDF en una nueva pestaña """
+        self.ensure_one()
+        return self.env.ref('modulo_gestion_envio.action_report_shipping_bl').report_action(self)
