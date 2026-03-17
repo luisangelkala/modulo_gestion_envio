@@ -113,68 +113,66 @@
 
         <!-- Template: Manifiesto de Carga (BL) -->
         <template id="template_report_shipping_bl">
-            <t t-call="web.html_container">
+            <!-- Usamos basic_layout para un control total de la página, sin headers/footers de Odoo -->
+            <t t-call="web.basic_layout">
                 <t t-foreach="docs" t-as="o">
-                    <t t-call="web.external_layout">
-                        <div class="page">
-                            <!-- Cabecera del Manifiesto -->
-                            <div class="row mb-4 text-center border-bottom pb-2">
-                                <div class="col-12">
-                                    <h2>MANIFIESTO DE CARGA</h2>
-                                    <h4>Ref: <span t-field="o.name"/></h4>
+                    <!-- Nivel 1: Iterar sobre cada línea/bulto -->
+                    <t t-foreach="o.line_ids" t-as="line">
+                        <!-- Nivel 2: Iterar 3 veces para las copias -->
+                        <t t-foreach="[1, 2, 3]" t-as="copy_idx">
+                            <!--
+                                Bloque HBL Individual.
+                                - height: 48vh -> Ocupa un poco menos de la mitad de la página.
+                                - page-break-inside: avoid -> Evita que el bloque se parta entre páginas.
+                                - border-bottom -> Línea punteada para recorte.
+                            -->
+                            <div class="hbl-block" style="height: 48vh; page-break-inside: avoid; border-bottom: 1px dashed #888; padding: 1rem; margin-bottom: 1vh; box-sizing: border-box;">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <h4>HOUSE BILL OF LADING</h4>
+                                        <p class="mb-0"><strong>Agencia Origen:</strong> <span t-field="o.agencia_origen"/></p>
+                                        <p class="mb-0"><strong>AWB/Contenedor:</strong> <span t-field="o.awb"/></p>
+                                        <p><strong>Fecha Salida:</strong> <span t-field="o.date_shipping" t-options='{"widget": "date"}'/></p>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <img t-if="o.company_id.logo" t-att-src="image_data_uri(o.company_id.logo)" style="max-height: 50px;" alt="Logo"/>
+                                        <h5 class="mt-2">Copia <t t-esc="copy_idx"/>/3</h5>
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="row mb-4">
-                                <div class="col-6">
-                                    <strong>Agencia Origen:</strong> <span t-field="o.agencia_origen"/><br/>
-                                    <strong>País Destino:</strong> <span t-field="o.pais_id.name"/><br/>
-                                    <strong>Fecha Salida:</strong> <span t-field="o.date_shipping"/>
-                                </div>
-                                <div class="col-6 text-end">
-                                    <strong>Consignatario:</strong> <span t-field="o.consignatario_id.name"/><br/>
-                                    <strong>AWB / Contenedor:</strong> <span t-field="o.awb"/><br/>
-                                    <strong>Transporte:</strong> <span t-field="o.transport_type"/>
-                                </div>
-                            </div>
 
-                            <!-- Tabla de Detalles -->
-                            <table class="table table-sm table-striped table-bordered mt-3">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Código</th>
-                                        <th>Remitente</th>
-                                        <th>Destinatario</th>
-                                        <th>Mercancía</th>
-                                        <th class="text-end">Cant.</th>
-                                        <th class="text-end">Peso</th>
-                                        <th class="text-end">Vol</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr t-foreach="o.line_ids" t-as="line">
-                                        <td><span t-if="line.package_code != 'Borrador'" t-field="line.package_code"/></td>
-                                        <td><span t-field="line.sender_id.name"/> <span t-if="line.sender_id.vat" class="text-muted">(<span t-field="line.sender_id.vat"/>)</span></td>
-                                        <td>
-                                            <span t-field="line.receiver_id.name"/><br/>
-                                            <small class="text-muted"><span t-field="line.receiver_id.street"/>, <span t-field="line.receiver_id.city"/></small>
-                                        </td>
-                                        <td><span t-field="line.description"/></td>
-                                        <td class="text-end"><span t-field="line.packages_qty"/></td>
-                                        <td class="text-end"><span t-field="line.weight"/></td>
-                                        <td class="text-end"><span t-field="line.volume" t-options='{"widget": "float", "precision": 3}'/></td>
-                                    </tr>
-                                </tbody>
-                                <tfoot>
-                                    <tr class="fw-bold table-active">
-                                        <td colspan="4" class="text-end">TOTALES:</td>
-                                        <td class="text-end"><span t-field="o.total_packages"/></td>
-                                        <td class="text-end"><span t-field="o.total_weight"/></td>
-                                        <td class="text-end"><span t-field="o.total_volume" t-options='{"widget": "float", "precision": 3}'/></td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
+                                <div class="row mt-3">
+                                    <div class="col-6">
+                                        <strong>Remitente (Shipper):</strong>
+                                        <div t-field="line.sender_id" t-options='{"widget": "contact", "fields": ["name", "address", "phone", "vat"], "no_marker": True}'/>
+                                    </div>
+                                    <div class="col-6">
+                                        <strong>Destinatario (Consignee):</strong>
+                                        <div t-field="line.receiver_id" t-options='{"widget": "contact", "fields": ["name", "address", "phone", "vat"], "no_marker": True}'/>
+                                    </div>
+                                </div>
+
+                                <table class="table table-sm table-bordered mt-3">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Código Bulto</th>
+                                            <th>Mercancía</th>
+                                            <th class="text-end">Cant.</th>
+                                            <th class="text-end">Peso (Kg)</th>
+                                            <th class="text-end">Volumen (m³)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span t-if="line.package_code != 'Borrador'" t-field="line.package_code"/></td>
+                                            <td><span t-field="line.description"/></td>
+                                            <td class="text-end"><span t-field="line.packages_qty"/></td>
+                                            <td class="text-end"><span t-field="line.weight"/></td>
+                                            <td class="text-end"><span t-field="line.volume" t-options='{"widget": "float", "precision": 3}'/></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
                     </t>
                 </t>
             </t>
