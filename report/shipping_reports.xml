@@ -87,19 +87,23 @@
                                         <tr>
                                             <td style="border: 1px solid black; padding: 4px; vertical-align: top;" colspan="1">
                                                 <strong>1. SHIPPER / EXPORTER</strong><br/>
-                                                <span t-field="line.sender_id.name" style="font-weight:bold;"/><br/>
-                                                <span t-field="line.sender_id.street"/><t t-if="line.sender_id.street2">, <span t-field="line.sender_id.street2"/></t><br/>
-                                                <span t-field="line.sender_id.city"/>, <span t-field="line.sender_id.country_id.name"/><br/>
-                                                Tel: <span t-field="line.sender_id.phone"/><br/>
-                                                ID/VAT: <span t-field="line.sender_id.vat"/>
+                                                <span t-esc="line.sender_id.name" style="font-weight:bold;"/><br/>
+                                                <t t-if="line.sender_id.street"><span t-esc="line.sender_id.street"/></t>
+                                                <t t-if="line.sender_id.street2">, <span t-esc="line.sender_id.street2"/></t><br/>
+                                                <t t-if="line.sender_id.city"><span t-esc="line.sender_id.city"/>, </t>
+                                                <span t-esc="line.sender_id.country_id.name"/><br/>
+                                                Tel: <span t-esc="line.sender_id.phone"/><br/>
+                                                ID/VAT: <span t-esc="line.sender_id.vat"/>
                                             </td>
                                             <td style="border: 1px solid black; padding: 4px; vertical-align: top;" colspan="2">
                                                 <strong>2. CONSIGNEE</strong><br/>
-                                                <span t-field="line.receiver_id.name" style="font-weight:bold;"/><br/>
-                                                <span t-field="line.receiver_id.street"/><t t-if="line.receiver_id.street2">, <span t-field="line.receiver_id.street2"/></t><br/>
-                                                <span t-field="line.receiver_id.city"/>, <span t-field="line.receiver_id.country_id.name"/><br/>
-                                                Tel: <span t-field="line.receiver_id.phone"/><br/>
-                                                ID/VAT: <span t-field="line.receiver_id.vat"/>
+                                                <span t-esc="line.receiver_id.name" style="font-weight:bold;"/><br/>
+                                                <t t-if="line.receiver_id.street"><span t-esc="line.receiver_id.street"/></t>
+                                                <t t-if="line.receiver_id.street2">, <span t-esc="line.receiver_id.street2"/></t><br/>
+                                                <t t-if="line.receiver_id.city"><span t-esc="line.receiver_id.city"/>, </t>
+                                                <span t-esc="line.receiver_id.country_id.name"/><br/>
+                                                Tel: <span t-esc="line.receiver_id.phone"/><br/>
+                                                ID/VAT: <span t-esc="line.receiver_id.vat"/>
                                             </td>
                                         </tr>
                                         <tr>
