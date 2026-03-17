@@ -37,11 +37,12 @@ modulo_gestion_envio/
 3. **Líneas de Bulto:** Remitente y Destinatario (res.partner), Mercancía, Cantidad, Medidas, Volumen, Peso.
 4. **Generación de Código:** Secuencia estricta asignada únicamente al hacer clic en "Confirmar".
 5. **Reportes y Vista Previa:** Documentos generados vía QWeb. Deben invocarse desde botones en la cabecera (visibles solo si está confirmado) y generar un PDF visualizable en el navegador. El BL debe replicar la estructura del Excel original (Cabecera general + Tabla de detalle con remitentes/destinatarios).
+   - **Excepción:** El BL puede imprimirse en estado Borrador para revisión, pero la columna "Código" aparecerá vacía.
 
 ## 5. Hoja de Ruta y Objetivos Pendientes
 - [x] **Paso 1: Interfaz Principal.** (RESUELTO)
 - [x] **Paso 2 y 3: Ajuste Estructural (Excel) y Seguridad.** (RESUELTO)
-- [ ] **Paso 4.1: Reporte PDF del BL (Manifiesto).**
+- [x] **Paso 4.1: Reporte PDF del BL (Manifiesto).** (RESUELTO - Botón visible siempre, lógica de columna vacía en borrador, menú Acciones limpio).
       - Añadir botón "Imprimir BL" en el `<header>` de `shipping_management_views.xml` (visible solo si `state == 'confirmed'`).
       - Definir el `<record model="ir.actions.report">` para el BL en `report/shipping_reports.xml`.
       - Diseñar el `<template>` QWeb del BL para que muestre la información general de la Guía y una tabla iterando las líneas con Remitente, Destinatario, Mercancía, Peso, Volumen y Código.

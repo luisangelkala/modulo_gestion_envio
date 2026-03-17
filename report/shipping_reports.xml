@@ -9,8 +9,6 @@
             <field name="report_name">modulo_gestion_envio.report_shipping_labels</field>
             <field name="report_file">modulo_gestion_envio.report_shipping_labels</field>
             <field name="print_report_name">'Etiquetas - %s' % object.name</field>
-            <field name="binding_model_id" ref="model_shipping_management"/>
-            <field name="binding_type">report</field>
         </record>
 
         <!-- Action: HBL -->
@@ -21,8 +19,6 @@
             <field name="report_name">modulo_gestion_envio.report_shipping_hbl</field>
             <field name="report_file">modulo_gestion_envio.report_shipping_hbl</field>
             <field name="print_report_name">'HBL - %s' % object.name</field>
-            <field name="binding_model_id" ref="model_shipping_management"/>
-            <field name="binding_type">report</field>
         </record>
 
         <!-- Action: Manifiesto de Carga (BL) - Sin Binding para evitar Error #003 -->
@@ -157,7 +153,7 @@
                                 </thead>
                                 <tbody>
                                     <tr t-foreach="o.line_ids" t-as="line">
-                                        <td><span t-field="line.package_code"/></td>
+                                        <td><span t-if="line.package_code != 'Borrador'" t-field="line.package_code"/></td>
                                         <td><span t-field="line.sender_id.name"/> <span t-if="line.sender_id.vat" class="text-muted">(<span t-field="line.sender_id.vat"/>)</span></td>
                                         <td>
                                             <span t-field="line.receiver_id.name"/><br/>
