@@ -40,10 +40,10 @@ modulo_gestion_envio/
 ## 5. Hoja de Ruta y Objetivos Pendientes
 - [x] **Paso 1, 2 y 3: Interfaz, Ajuste Estructural y Seguridad.** (RESUELTO)
 - [x] **Paso 4.1: MAQUETACIÓN CSS/HTML PIXEL-PERFECT - Reporte HBL.** (RESUELTO)
-      - Implementado formato estricto de formulario aduanero.
-      - Mapeo correcto de referencias: `package_code` en "EXPORT REFERENCES" y "MARKS AND NUMBERS".
-      - Columnas de mercancía exactas con textos estáticos (CUBICAJE, NVD).
-      - Pie de página completo con secciones de Fletes, Firmas, Buque/Manifiesto y Caja de Aduana.
+      - Implementado formato estricto: Tabla única con bordes colapsados.
+      - Cabecera: "COMBINED TRANSPORT BILL OF LADING" y "EXPORT REFERENCES" (package_code).
+      - Columnas de mercancía en inglés exacto (MARKS AND NUMBERS, VALOR USD, etc.).
+      - Pie de página aduanero obligatorio con caja "Sólo para uso de la Aduana".
 - [ ] **Paso 4.2: Reporte PDF de Etiquetas.** (En espera).
 - [ ] **Paso 5: Permisos (ACL).** Validar `ir.model.access.csv`.
 
