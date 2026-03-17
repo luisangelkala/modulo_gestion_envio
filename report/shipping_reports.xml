@@ -10,6 +10,22 @@
             <field name="print_report_name">'Etiquetas - %s' % object.name</field>
         </record>
 
+        <record id="paperformat_hbl_strict" model="report.paperformat">
+            <field name="name">HBL Strict A4</field>
+            <field name="default" eval="True"/>
+            <field name="format">A4</field>
+            <field name="page_height">0</field>
+            <field name="page_width">0</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">5</field>
+            <field name="margin_bottom">5</field>
+            <field name="margin_left">5</field>
+            <field name="margin_right">5</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">0</field>
+            <field name="dpi">90</field>
+        </record>
+
         <record id="action_report_shipping_bl" model="ir.actions.report">
             <field name="name">HBL (3 Copias)</field>
             <field name="model">shipping.management</field>
@@ -17,6 +33,7 @@
             <field name="report_name">modulo_gestion_envio.report_shipping_hbl</field>
             <field name="report_file">modulo_gestion_envio.report_shipping_hbl</field>
             <field name="print_report_name">'HBL - %s' % object.name</field>
+            <field name="paperformat_id" ref="paperformat_hbl_strict"/>
         </record>
 
         <template id="report_shipping_labels">
@@ -147,18 +164,20 @@
                                     </tr>
                                     <tr>
                                         <td colspan="3" style="border: 1px solid black; padding: 5px;">
-                                            <div style="display: flex; justify-content: space-between; align-items: flex-end; height: 50px;">
-                                                <div style="width: 70%;">
-                                                    <strong style="text-decoration: underline;">Sólo para uso de la Aduana</strong><br/>
-                                                    <strong>CUBANACAN</strong><br/>
-                                                    BUQUE: <span t-esc="o.carrier"/><br/>
-                                                    FIRMA: _________________________________<br/>
-                                                    MANIFIESTO: <span t-esc="o.name"/>
-                                                </div>
-                                                <div style="width: 30%; text-align: right; vertical-align: bottom;">
-                                                    <span style="font-size: 12px; font-weight: bold;" t-esc="datetime.datetime.now().strftime('%d/%m/%Y')"/>
-                                                </div>
-                                            </div>
+                                            <table style="width: 100%; height: 50px;">
+                                                <tr>
+                                                    <td style="width: 70%; vertical-align: top;">
+                                                        <strong style="text-decoration: underline;">Solo para uso de la Aduana</strong><br/>
+                                                        <strong>CUBANACAN</strong><br/>
+                                                        BUQUE: <span t-esc="o.carrier"/><br/>
+                                                        FIRMA: _________________________________<br/>
+                                                        MANIFIESTO: <span t-esc="o.name"/>
+                                                    </td>
+                                                    <td style="width: 30%; text-align: right; vertical-align: bottom;">
+                                                        <span style="font-size: 12px; font-weight: bold;" t-esc="datetime.datetime.now().strftime('%d/%m/%Y')"/>
+                                                    </td>
+                                                </tr>
+                                            </table>
                                         </td>
                                     </tr>
                                 </table>
