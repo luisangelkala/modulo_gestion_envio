@@ -60,7 +60,7 @@
                     <t t-foreach="o.line_ids" t-as="line">
                         <t t-foreach="[1, 2, 3]" t-as="copy_idx">
                             <div class="hbl-article" t-att-style="'position: relative; height: 48vh; margin-bottom: 1vh; box-sizing: border-box; page-break-inside: avoid; ' + ('page-break-after: always;' if copy_idx % 2 == 0 and copy_idx != 3 else '')">
-                                <table class="table-hbl" style="width: 100%; border-collapse: collapse; border: 2px solid black; font-size: 10px; font-family: Arial, sans-serif;">
+                                <table class="table-hbl" style="width: 100%; border-collapse: collapse; border: 2px solid black; font-size: 9px; font-family: Arial, sans-serif;">
                                     <!-- Fila 1: Shipper y Referencias -->
                                     <tr>
                                         <td style="width: 50%; border: 1px solid black; padding: 4px; vertical-align: top; height: 80px;">
@@ -73,7 +73,7 @@
                                         </td>
                                         <td style="width: 50%; border: 1px solid black; padding: 4px; vertical-align: top;">
                                             <div style="float: right; font-weight: bold;">COPY <t t-esc="copy_idx"/>/3</div>
-                                            <strong>DOCUMENT NO.</strong><br/>
+                                            <strong>EXPORT REFERENCES</strong><br/>
                                             <span t-if="line.package_code != 'Borrador'" t-field="line.package_code" style="font-size: 14px; font-weight: bold;"/><br/><br/>
                                             <strong>BOOKING REF:</strong> <span t-field="o.name"/>
                                         </td>
@@ -112,28 +112,50 @@
                                         <td colspan="2" style="border: 1px solid black; padding: 0;">
                                             <table style="width: 100%; border-collapse: collapse; text-align: center;">
                                                 <tr style="border-bottom: 1px solid black; background-color: #eee;">
-                                                    <th style="border-right: 1px solid black; padding: 2px; width: 25%;">MARKS AND NUMBERS</th>
+                                                    <th style="border-right: 1px solid black; padding: 2px; width: 20%;">MARKS AND NUMBERS</th>
                                                     <th style="border-right: 1px solid black; padding: 2px; width: 10%;">NO. OF PKGS</th>
-                                                    <th style="border-right: 1px solid black; padding: 2px; width: 40%;">DESCRIPTION OF COMMODITIES</th>
-                                                    <th style="padding: 2px; width: 25%;">GROSS WEIGHT / MEASUREMENT</th>
+                                                    <th style="border-right: 1px solid black; padding: 2px; width: 40%;">DESCRIPTION OF COMMODITIES in schedule B detail</th>
+                                                    <th style="border-right: 1px solid black; padding: 2px; width: 20%;">GROSS WEIGHT (kg)</th>
+                                                    <th style="padding: 2px; width: 10%;">VALOR (USD)</th>
                                                 </tr>
                                                 <tr style="height: 100px; vertical-align: top;">
                                                     <td style="border-right: 1px solid black; padding: 4px;"><span t-if="line.package_code != 'Borrador'" t-field="line.package_code" style="font-weight:bold;"/></td>
                                                     <td style="border-right: 1px solid black; padding: 4px;">1</td>
                                                     <td style="border-right: 1px solid black; padding: 4px; text-align: left;">DICE CONTENER: <span t-field="line.description"/></td>
-                                                    <td style="padding: 4px; text-align: right;">
+                                                    <td style="border-right: 1px solid black; padding: 4px; text-align: right;">
                                                         <span t-field="line.weight"/> KG<br/>
-                                                        CUBICAJE: <span t-field="line.volume" t-options='{"widget": "float", "precision": 3}'/> M3<br/>
-                                                        VALOR: NVD
+                                                        CUBICAJE (M3): <span t-field="line.volume" t-options='{"widget": "float", "precision": 3}'/>
                                                     </td>
+                                                    <td style="padding: 4px;">NVD</td>
                                                 </tr>
                                             </table>
                                         </td>
                                     </tr>
-                                    <!-- Fila 5: Firmas -->
+                                    <!-- Fila 5: Fletes y Cargos -->
                                     <tr>
-                                        <td style="border: 1px solid black; padding: 4px; vertical-align: bottom; height: 60px;"><strong>RECEIVED by the Carrier:</strong><br/>__________________________</td>
-                                        <td style="border: 1px solid black; padding: 4px; vertical-align: bottom;"><strong>Place and Date of Issue:</strong><br/><span t-field="o.date_shipping"/>, <span t-field="o.agencia_origen"/><br/><br/>__________________________<br/>Carrier or Agent</td>
+                                        <td colspan="2" style="border: 1px solid black; padding: 0;">
+                                             <table style="width: 100%; border-collapse: collapse;">
+                                                <tr style="border-bottom: 1px solid black;">
+                                                    <td style="width: 40%; border-right: 1px solid black; padding: 2px;"><strong>FREIGHT AND CHARGES</strong></td>
+                                                    <td style="width: 30%; border-right: 1px solid black; padding: 2px; text-align: center;"><strong>PREPAID</strong></td>
+                                                    <td style="width: 30%; padding: 2px; text-align: center;"><strong>COLLECT</strong></td>
+                                                </tr>
+                                                <tr style="height: 20px;"><td style="border-right: 1px solid black;"></td><td style="border-right: 1px solid black;"></td><td></td></tr>
+                                             </table>
+                                        </td>
+                                    </tr>
+                                    <!-- Fila 6: Firmas y Aduana -->
+                                    <tr>
+                                        <td style="width: 50%; border-right: 1px solid black; padding: 4px; vertical-align: top; height: 60px;">
+                                            <strong>RECEIVED by the Carrier:</strong><br/>
+                                            BUQUE: <span t-field="o.carrier"/> / MANIFIESTO: <span t-field="o.awb"/><br/><br/>
+                                            __________________________<br/>Firma Transportista
+                                        </td>
+                                        <td style="width: 50%; padding: 4px; vertical-align: top;">
+                                            <div style="float: right; border: 1px solid black; padding: 2px; width: 100px; height: 40px; text-align: center;"><small>Sólo para uso de la Aduana</small></div>
+                                            <strong>Place and Date of Issue:</strong><br/><span t-field="o.agencia_origen"/>, <span t-field="o.date_shipping"/><br/><br/>
+                                            __________________________<br/>Carrier or Agent
+                                        </td>
                                     </tr>
                                 </table>
                             </div>

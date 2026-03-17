@@ -28,20 +28,28 @@ modulo_gestion_envio/
 │   ├── container_type_views.xml    # (RESUELTO)
 │   └── shipping_management_views.xml # (RESUELTO)
 └── report/
-    └── shipping_reports.xml        # (EN MAQUETACIÓN FRONTEND - HBL)
+    └── shipping_reports.xml        # (EN MAQUETACIÓN FRONTEND - CORRECCIÓN HBL)
 
 ## 4. Requisitos y Reglas de Negocio Clave
 1. **Seguridad de Roles:** Admin (Confirmar) y Tráfico (Líneas).
 2. **Generación de Código:** Secuencia estricta asignada únicamente al confirmar.
-3. **Reportes (CRÍTICO - Diseño HBL):** - El HBL debe generar **3 copias idénticas por bulto** e imprimir **2 copias por hoja A4** (Lógica backend resuelta).
-   - **Maquetación (Frontend):** Debe ser una cuadrícula estricta (Grid) usando tablas HTML con bordes negros (`border-collapse: collapse`), imitando el formulario de aduana original.
-   - **Mapeo de Datos:** La referencia principal del HBL es el código único del bulto (`line.package_code`), NO el nombre de la guía.
+3. **Reportes (CRÍTICO - Diseño HBL):** - El HBL debe generar **3 copias idénticas por bulto** e imprimir **2 copias por hoja A4**.
+   - **Maquetación (Frontend):** Cuadrícula estricta (Grid) con tablas HTML (`border-collapse: collapse; border: 1px solid black;`).
+   - **Mapeo de Datos:** La referencia principal del HBL es el código único del bulto (`line.package_code`), NO el nombre de la guía general.
 
 ## 5. Hoja de Ruta y Objetivos Pendientes
 - [x] **Paso 1, 2 y 3: Interfaz, Ajuste Estructural y Seguridad.** (RESUELTO)
-- [ ] **Paso 4.1: MAQUETACIÓN CSS/HTML PIXEL-PERFECT - Reporte HBL.**
-      - **Backend:** Mantener la iteración actual (3 copias por `line`, 2 por página).
-      - **Frontend (Estructura Legal):** Construir una tabla maestra HTML que contenga los recuadros exactos del PDF original:
-        - *Cajas Superiores:* "SHIPPER" (con info de `sender_id`), "CONSIGNED TO" (con info de `receiver_id`), "EXPORT REFERENCES" (debe mostrar `line.package_code` en grande).
-        - *Cajas Fijas:* "NOTIFY PARTY: ORDAZ INVESTMENT GROUP, S.A...", "PORT OF DISCHARGE: MARIEL, CU.", "PLACE OF DELIVERY: CUBANACAN".
-        - *Tabla de Mercancía:* Columnas "MARKS AND NUMBERS" (mostrar `line.package_code`), "NUMBER OF PACKS" (1), "DESCRIPTION OF COMMODITIES", "GROSS WEIGHT (kg)" (
+- [x] **Paso 4.1: MAQUETACIÓN CSS/HTML PIXEL-PERFECT - Reporte HBL.** (RESUELTO)
+      - Implementado formato estricto de formulario aduanero.
+      - Mapeo correcto de referencias: `package_code` en "EXPORT REFERENCES" y "MARKS AND NUMBERS".
+      - Columnas de mercancía exactas con textos estáticos (CUBICAJE, NVD).
+      - Pie de página completo con secciones de Fletes, Firmas, Buque/Manifiesto y Caja de Aduana.
+- [ ] **Paso 4.2: Reporte PDF de Etiquetas.** (En espera).
+- [ ] **Paso 5: Permisos (ACL).** Validar `ir.model.access.csv`.
+
+## 6. REGLAS ESTRICTAS PARA CODE ASSIST
+1. **Pedir Autorización:** Propón la solución y pide autorización antes de dar el código final.
+2. **Prohibición de Sobrescritura:** NO tocar funcionalidades marcadas como (RESUELTO).
+3. **Respetar la Bitácora:** Revisa `ERROR.md` siempre.
+4. **Aislamiento de Cambios:** Entrega solo las porciones de código a modificar.
+5. **Actualización del Contexto:** Al finalizar un paso, proveer el texto actualizado.
