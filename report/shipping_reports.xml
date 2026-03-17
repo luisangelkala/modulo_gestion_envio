@@ -58,47 +58,83 @@
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
                     <t t-foreach="o.line_ids" t-as="line">
-                        <!-- Loop para 3 copias -->
                         <t t-foreach="[1, 2, 3]" t-as="copy_idx">
-                            <!-- Contenedor optimizado: 48% alto para caber 2 por A4 -->
-                            <div class="article" t-att-style="'position: relative; height: 48vh; border: 1px solid #333; margin-bottom: 1vh; padding: 10px; box-sizing: border-box; page-break-inside: avoid; ' + ('page-break-after: always;' if copy_idx % 2 == 0 and copy_idx != 3 else '')">
-                                
-                                <div class="row">
-                                    <div class="col-6">
-                                        <h4>HOUSE BILL OF LADING</h4>
-                                        <small>Copy <t t-esc="copy_idx"/>/3</small>
-                                    </div>
-                                    <div class="col-6 text-end">
-                                        <h3><span t-field="o.name"/></h3>
-                                    </div>
-                                </div>
-                                <hr/>
-                                <div class="row mt-2">
-                                    <div class="col-6">
-                                        <strong>Shipper:</strong><br/>
-                                        [Nombre de tu Empresa]<br/>
-                                        Logistics Dept.
-                                    </div>
-                                    <div class="col-6">
-                                        <strong>Consignee:</strong><br/>
-                                        <span t-field="line.receiver_id.name"/><br/>
-                                        <span t-field="line.receiver_id.street"/><br/>
-                                        <span t-field="line.receiver_id.city"/>
-                                    </div>
-                                </div>
-                                
-                                <table class="table table-sm table-bordered mt-4">
-                                    <thead>
-                                        <tr><th>Package Code</th><th>Dims (L*W*H)</th><th>Vol (m³)</th><th>Weight (Kg)</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td><span t-field="line.package_code"/></td>
-                                            <td><span t-field="line.length"/> x <span t-field="line.width"/> x <span t-field="line.height"/></td>
-                                            <td><span t-field="line.volume"/></td>
-                                            <td><span t-field="line.weight"/></td>
-                                        </tr>
-                                    </tbody>
+                            <div class="hbl-article" t-att-style="'position: relative; height: 48vh; margin-bottom: 1vh; box-sizing: border-box; page-break-inside: avoid; ' + ('page-break-after: always;' if copy_idx % 2 == 0 and copy_idx != 3 else '')">
+                                <table class="table-hbl" style="width: 100%; border-collapse: collapse; border: 2px solid black; font-size: 10px; font-family: Arial, sans-serif;">
+                                    <!-- Fila 1: Shipper y Referencias -->
+                                    <tr>
+                                        <td style="width: 50%; border: 1px solid black; padding: 4px; vertical-align: top; height: 80px;">
+                                            <strong>SHIPPER / EXPORTER</strong><br/>
+                                            <span t-field="line.sender_id.name" style="font-weight:bold;"/><br/>
+                                            <span t-field="line.sender_id.street"/><t t-if="line.sender_id.street2">, <span t-field="line.sender_id.street2"/></t><br/>
+                                            <span t-field="line.sender_id.city"/>, <span t-field="line.sender_id.country_id.name"/><br/>
+                                            Tel: <span t-field="line.sender_id.phone"/><br/>
+                                            ID/VAT: <span t-field="line.sender_id.vat"/>
+                                        </td>
+                                        <td style="width: 50%; border: 1px solid black; padding: 4px; vertical-align: top;">
+                                            <div style="float: right; font-weight: bold;">COPY <t t-esc="copy_idx"/>/3</div>
+                                            <strong>DOCUMENT NO.</strong><br/>
+                                            <span t-if="line.package_code != 'Borrador'" t-field="line.package_code" style="font-size: 14px; font-weight: bold;"/><br/><br/>
+                                            <strong>BOOKING REF:</strong> <span t-field="o.name"/>
+                                        </td>
+                                    </tr>
+                                    <!-- Fila 2: Consignatario y Notify Party -->
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 4px; vertical-align: top; height: 80px;">
+                                            <strong>CONSIGNED TO</strong><br/>
+                                            <span t-field="line.receiver_id.name" style="font-weight:bold;"/><br/>
+                                            <span t-field="line.receiver_id.street"/><t t-if="line.receiver_id.street2">, <span t-field="line.receiver_id.street2"/></t><br/>
+                                            <span t-field="line.receiver_id.city"/>, <span t-field="line.receiver_id.country_id.name"/><br/>
+                                            Tel: <span t-field="line.receiver_id.phone"/><br/>
+                                            ID/VAT: <span t-field="line.receiver_id.vat"/>
+                                        </td>
+                                        <td style="border: 1px solid black; padding: 4px; vertical-align: top;">
+                                            <strong>NOTIFY PARTY</strong><br/>
+                                            <strong>ORDAZ INVESTMENT GROUP, S.A.</strong><br/>
+                                            Manzana 14, Lote 10, Calle 4ta<br/>
+                                            France Field, Zona Libre de Colón<br/>
+                                            Rep. de Panamá
+                                        </td>
+                                    </tr>
+                                    <!-- Fila 3: Puertos -->
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 4px; vertical-align: top;">
+                                            <strong>PORT OF LOADING / RECEIPT</strong><br/>
+                                            <span t-field="o.agencia_origen"/>
+                                        </td>
+                                        <td style="border: 1px solid black; padding: 4px; vertical-align: top;">
+                                            <strong>PORT OF DISCHARGE:</strong> <strong>MARIEL, CU.</strong><br/>
+                                            <strong>PLACE OF DELIVERY:</strong> <strong>CUBANACAN</strong>
+                                        </td>
+                                    </tr>
+                                    <!-- Fila 4: Detalles de Mercancía -->
+                                    <tr>
+                                        <td colspan="2" style="border: 1px solid black; padding: 0;">
+                                            <table style="width: 100%; border-collapse: collapse; text-align: center;">
+                                                <tr style="border-bottom: 1px solid black; background-color: #eee;">
+                                                    <th style="border-right: 1px solid black; padding: 2px; width: 25%;">MARKS AND NUMBERS</th>
+                                                    <th style="border-right: 1px solid black; padding: 2px; width: 10%;">NO. OF PKGS</th>
+                                                    <th style="border-right: 1px solid black; padding: 2px; width: 40%;">DESCRIPTION OF COMMODITIES</th>
+                                                    <th style="padding: 2px; width: 25%;">GROSS WEIGHT / MEASUREMENT</th>
+                                                </tr>
+                                                <tr style="height: 100px; vertical-align: top;">
+                                                    <td style="border-right: 1px solid black; padding: 4px;"><span t-if="line.package_code != 'Borrador'" t-field="line.package_code" style="font-weight:bold;"/></td>
+                                                    <td style="border-right: 1px solid black; padding: 4px;">1</td>
+                                                    <td style="border-right: 1px solid black; padding: 4px; text-align: left;">DICE CONTENER: <span t-field="line.description"/></td>
+                                                    <td style="padding: 4px; text-align: right;">
+                                                        <span t-field="line.weight"/> KG<br/>
+                                                        CUBICAJE: <span t-field="line.volume" t-options='{"widget": "float", "precision": 3}'/> M3<br/>
+                                                        VALOR: NVD
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <!-- Fila 5: Firmas -->
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 4px; vertical-align: bottom; height: 60px;"><strong>RECEIVED by the Carrier:</strong><br/>__________________________</td>
+                                        <td style="border: 1px solid black; padding: 4px; vertical-align: bottom;"><strong>Place and Date of Issue:</strong><br/><span t-field="o.date_shipping"/>, <span t-field="o.agencia_origen"/><br/><br/>__________________________<br/>Carrier or Agent</td>
+                                    </tr>
                                 </table>
                             </div>
                             <!-- Si es la 2da copia, forzamos salto de página para que la 3ra quede en hoja nueva (o flujo continuo) -->
