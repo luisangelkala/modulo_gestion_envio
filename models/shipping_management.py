@@ -32,6 +32,10 @@ class ShippingManagement(models.Model):
     
     carrier = fields.Char(string='Naviera / Aerolínea', tracking=True)
 
+    # Campo de Compañía para soporte multi-empresa y reportes
+    company_id = fields.Many2one('res.company', string='Compañía', required=True, 
+                                 default=lambda self: self.env.company)
+
     line_ids = fields.One2many('shipping.management.line', 'shipping_id', string='Líneas de Envío')
 
     # Smart Stats (Computados)
