@@ -10,7 +10,7 @@
             <field name="print_report_name">'Etiquetas - %s' % object.name</field>
         </record>
 
-        <record id="action_report_shipping_hbl" model="ir.actions.report">
+        <record id="action_report_shipping_bl" model="ir.actions.report">
             <field name="name">HBL (3 Copias)</field>
             <field name="model">shipping.management</field>
             <field name="report_type">qweb-pdf</field>
