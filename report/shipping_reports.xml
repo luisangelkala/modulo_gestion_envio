@@ -48,8 +48,8 @@
                                     <img t-att-src="'/report/barcode/?barcode_type=QR&amp;value=%s&amp;width=200&amp;height=200' % o.name" style="width:200px;height:200px"/>
                                 </div>
                                 <strong>Bulto ID:</strong> <span t-field="line.package_code"/><br/>
-                                <strong>Cliente:</strong> <span t-field="line.partner_id.name"/><br/>
-                                <strong>Destino:</strong> <span t-field="line.partner_id.city"/>, <span t-field="line.partner_id.country_id.code"/>
+                                <strong>Cliente:</strong> <span t-field="line.receiver_id.name"/><br/>
+                                <strong>Destino:</strong> <span t-field="line.receiver_id.city"/>, <span t-field="line.receiver_id.country_id.code"/>
                             </div>
                         </t>
                     </t>
@@ -85,9 +85,9 @@
                                     </div>
                                     <div class="col-6">
                                         <strong>Consignee:</strong><br/>
-                                        <span t-field="line.partner_id.name"/><br/>
-                                        <span t-field="line.partner_id.street"/><br/>
-                                        <span t-field="line.partner_id.city"/>
+                                        <span t-field="line.receiver_id.name"/><br/>
+                                        <span t-field="line.receiver_id.street"/><br/>
+                                        <span t-field="line.receiver_id.city"/>
                                     </div>
                                 </div>
                                 
