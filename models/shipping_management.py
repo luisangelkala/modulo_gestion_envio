@@ -87,12 +87,6 @@ class ShippingManagement(models.Model):
         # Validaciones de Reglas de Negocio
         self._check_capacity_rules()
 
-        # Asignación de Secuencia SOLO al confirmar
-        for line in self.line_ids:
-            if not line.package_code or line.package_code == 'Borrador':
-                # Genera: 246-11-XXXXX
-                line.package_code = self.env['ir.sequence'].next_by_code('shipping.management') or _('N/A')
-
         self.write({'state': 'confirmed'})
 
     def _check_capacity_rules(self):
