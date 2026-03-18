@@ -19,7 +19,7 @@ modulo_gestion_envio/
 │   └── shipping_line.py            # (RESUELTO)
 ├── security/
 │   ├── groups.xml                  # (RESUELTO)
-│   └── ir.model.access.csv         # (PENDIENTE)
+│   └── ir.model.access.csv         # (RESUELTO)
 ├── data/
 │   ├── sequence.xml                # (RESUELTO)
 │   └── container_data.xml          # (RESUELTO)
@@ -50,7 +50,8 @@ modulo_gestion_envio/
       - **Impresión Selectiva:** Añadir checkbox (`Boolean`) en las líneas de carga. El reporte HBL debe filtrar: imprimir seleccionados si existen, o todos si ninguno está marcado.
       - **Campos Relacionales:** Convertir `agencia_origen` y `carrier` a `Many2one` (`res.partner`). Actualizar vistas y reportes acorde (acceder a `.name`).
       - **Catálogo de Referencias:** Implementado modelo `shipping.reference.catalog`. Menús separados para Aéreo/Marítimo. Campo selector en formulario principal con dominio dinámico.
-- [ ] **Paso 5: Permisos (ACL).** Validar `ir.model.access.csv`.
+- [x] **Paso 5: Permisos (ACL).** (RESUELTO)
+      - Creado `ir.model.access.csv` con permisos para Management, Lines, Container Types y el nuevo Catálogo de Referencias.
 
 ## 6. REGLAS ESTRICTAS PARA CODE ASSIST
 1. **Pedir Autorización:** Propón la solución antes del código final.
