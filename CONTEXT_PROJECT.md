@@ -49,7 +49,7 @@ modulo_gestion_envio/
 - [x] **Paso 4.3: Refinamiento de Datos y Selección.** (RESUELTO)
       - **Impresión Selectiva:** Añadir checkbox (`Boolean`) en las líneas de carga. El reporte HBL debe filtrar: imprimir seleccionados si existen, o todos si ninguno está marcado.
       - **Campos Relacionales:** Convertir `agencia_origen` y `carrier` a `Many2one` (`res.partner`). Actualizar vistas y reportes acorde (acceder a `.name`).
-      - **Configuración de Referencias:** Crear modelo `shipping.document.template` (Nombre, Tipo) y menú en Configuración. En el formulario principal, permitir seleccionar este template para rellenar automáticamente el campo `name` (Referencia).
+      - **Catálogo de Referencias:** Implementado modelo `shipping.reference.catalog`. Menús separados para Aéreo/Marítimo. Campo selector en formulario principal con dominio dinámico.
 - [ ] **Paso 5: Permisos (ACL).** Validar `ir.model.access.csv`.
 
 ## 6. REGLAS ESTRICTAS PARA CODE ASSIST

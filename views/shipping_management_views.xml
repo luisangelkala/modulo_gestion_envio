@@ -1,21 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Vistas para el Clasificador de Documentos (Configuración) -->
-    <record id="view_shipping_document_template_tree" model="ir.ui.view">
-        <field name="name">shipping.document.template.tree</field>
-        <field name="model">shipping.document.template</field>
+    <!-- Vistas para el Catálogo de Referencias (Configuración) -->
+    <record id="view_shipping_reference_catalog_tree" model="ir.ui.view">
+        <field name="name">shipping.reference.catalog.tree</field>
+        <field name="model">shipping.reference.catalog</field>
         <field name="arch" type="xml">
-            <tree string="Plantillas de Documentos" editable="bottom">
+            <tree string="Catálogo de Referencias" editable="bottom">
                 <field name="name"/>
                 <field name="transport_type"/>
+                <field name="active" widget="boolean_toggle"/>
             </tree>
         </field>
     </record>
 
-    <record id="action_shipping_document_template" model="ir.actions.act_window">
-        <field name="name">Clasificador de Guías/Manifiestos</field>
-        <field name="res_model">shipping.document.template</field>
+    <!-- Acción: Guías Aéreas -->
+    <record id="action_shipping_reference_catalog_air" model="ir.actions.act_window">
+        <field name="name">Guías Aéreas</field>
+        <field name="res_model">shipping.reference.catalog</field>
         <field name="view_mode">tree,form</field>
+        <field name="domain">[('transport_type', '=', 'air')]</field>
+        <field name="context">{'default_transport_type': 'air'}</field>
+    </record>
+
+    <!-- Acción: Manifiestos Marítimos -->
+    <record id="action_shipping_reference_catalog_sea" model="ir.actions.act_window">
+        <field name="name">Manifiestos Marítimos</field>
+        <field name="res_model">shipping.reference.catalog</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('transport_type', '=', 'sea')]</field>
+        <field name="context">{'default_transport_type': 'sea'}</field>
     </record>
 
     <record id="view_shipping_management_form" model="ir.ui.view">
@@ -46,9 +59,10 @@
                         </button>
                     </div>
                     <div class="oe_title">
-                        <label for="template_id" class="oe_edit_only" string="Cargar Plantilla"/>
-                        <field name="template_id" options="{'no_create': True, 'no_open': True}" 
-                               placeholder="Seleccionar Guía o Manifiesto..." 
+                        <label for="reference_catalog_id" class="oe_edit_only" string="Autocompletar Referencia"/>
+                        <field name="reference_catalog_id" options="{'no_create': True, 'no_open': True}" 
+                               placeholder="Seleccione identificador disponible..." 
+                               domain="[('transport_type', '=', transport_type)]"
                                readonly="state == 'confirmed'"/>
                         <h1><field name="name" placeholder="Referencia (Ej: GUIA-001)"/></h1>
                     </div>
@@ -148,15 +162,21 @@
               action="action_shipping_management" 
               sequence="10"/>
 
-    <!-- Menú de Configuración -->
-    <!-- Nota: Si ya existe un menú de configuración en menus.xml, este ítem se añadirá allí.
-         Si no, se creará bajo Operaciones o la raíz según se defina.
-         Aquí asumo que quieres verlo accesible. Usaré secuencia 99 bajo la raíz para "Configuración" si no existe. -->
+    <!-- Menús de Configuración -->
     
-    <menuitem id="menu_shipping_config_templates"
-              name="Clasificador Documentos"
+    <menuitem id="menu_shipping_config_root"
+              name="Configuración"
               parent="menu_shipping_root"
-              action="action_shipping_document_template"
-              sequence="30"/>
+              sequence="100"/>
+
+    <menuitem id="menu_shipping_config_air"
+              name="Guías Aéreas"
+              parent="menu_shipping_config_root"
+              action="action_shipping_reference_catalog_air"/>
+
+    <menuitem id="menu_shipping_config_sea"
+              name="Manifiestos"
+              parent="menu_shipping_config_root"
+              action="action_shipping_reference_catalog_sea"/>
 
 </odoo>

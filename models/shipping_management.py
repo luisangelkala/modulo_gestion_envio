@@ -1,15 +1,17 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
-class ShippingDocumentTemplate(models.Model):
-    _name = 'shipping.document.template'
-    _description = 'Plantilla de Documento'
+class ShippingReferenceCatalog(models.Model):
+    _name = 'shipping.reference.catalog'
+    _description = 'Catálogo de Referencias'
+    _rec_name = 'name'
 
     name = fields.Char(string='Identificador / Referencia', required=True, help="Ej: MANIFIESTO-2023-001")
     transport_type = fields.Selection([
         ('air', 'Aéreo'),
         ('sea', 'Marítimo')
     ], string='Tipo de Transporte', required=True)
+    active = fields.Boolean(default=True, string="Activo")
 
 class ShippingManagement(models.Model):
     _name = 'shipping.management'
@@ -19,13 +21,13 @@ class ShippingManagement(models.Model):
 
     name = fields.Char(string='Referencia', required=True, copy=False, tracking=True)
     
-    template_id = fields.Many2one('shipping.document.template', string='Usar Plantilla', help="Seleccione para autocompletar Referencia y Tipo")
+    reference_catalog_id = fields.Many2one('shipping.reference.catalog', string='Seleccionar Identificador', 
+                                           help="Seleccione un número de referencia disponible del catálogo")
 
-    @api.onchange('template_id')
-    def _onchange_template_id(self):
-        if self.template_id:
-            self.name = self.template_id.name
-            self.transport_type = self.template_id.transport_type
+    @api.onchange('reference_catalog_id')
+    def _onchange_reference_catalog_id(self):
+        if self.reference_catalog_id:
+            self.name = self.reference_catalog_id.name
 
     state = fields.Selection([
         ('draft', 'Borrador'),
