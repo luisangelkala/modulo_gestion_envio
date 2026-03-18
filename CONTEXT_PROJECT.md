@@ -46,7 +46,7 @@ modulo_gestion_envio/
       - **Problema 2 (Encoding):** Reemplazar textos estáticos con tildes (Sólo, Colón, Panamá) por caracteres sin tildes o entidades HTML para evitar errores de codificación.
       - **Problema 3 (Márgenes):** Para que quepan 2 copias, se debe crear un `<record model="report.paperformat">` con márgenes mínimos (ej. top 10, bottom 10) y asignarlo al `<record id="action_report_shipping_bl" model="ir.actions.report">` usando el campo `paperformat_id`.
 - [ ] **Paso 4.2: Reporte PDF de Etiquetas.** (En espera).
-- [ ] **Paso 4.3: Refinamiento de Datos y Selección (NUEVO).**
+- [x] **Paso 4.3: Refinamiento de Datos y Selección.** (RESUELTO)
       - **Impresión Selectiva:** Añadir checkbox (`Boolean`) en las líneas de carga. El reporte HBL debe filtrar: imprimir seleccionados si existen, o todos si ninguno está marcado.
       - **Campos Relacionales:** Convertir `agencia_origen` y `carrier` a `Many2one` (`res.partner`). Actualizar vistas y reportes acorde (acceder a `.name`).
       - **Configuración de Referencias:** Crear modelo `shipping.document.template` (Nombre, Tipo) y menú en Configuración. En el formulario principal, permitir seleccionar este template para rellenar automáticamente el campo `name` (Referencia).

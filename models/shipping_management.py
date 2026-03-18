@@ -1,6 +1,16 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 
+class ShippingDocumentTemplate(models.Model):
+    _name = 'shipping.document.template'
+    _description = 'Plantilla de Documento'
+
+    name = fields.Char(string='Identificador / Referencia', required=True, help="Ej: MANIFIESTO-2023-001")
+    transport_type = fields.Selection([
+        ('air', 'Aéreo'),
+        ('sea', 'Marítimo')
+    ], string='Tipo de Transporte', required=True)
+
 class ShippingManagement(models.Model):
     _name = 'shipping.management'
     _description = 'Gestión de Envío'
@@ -8,6 +18,15 @@ class ShippingManagement(models.Model):
     _order = 'id desc'
 
     name = fields.Char(string='Referencia', required=True, copy=False, tracking=True)
+    
+    template_id = fields.Many2one('shipping.document.template', string='Usar Plantilla', help="Seleccione para autocompletar Referencia y Tipo")
+
+    @api.onchange('template_id')
+    def _onchange_template_id(self):
+        if self.template_id:
+            self.name = self.template_id.name
+            self.transport_type = self.template_id.transport_type
+
     state = fields.Selection([
         ('draft', 'Borrador'),
         ('confirmed', 'Confirmado')
