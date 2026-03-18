@@ -59,12 +59,14 @@
                         </button>
                     </div>
                     <div class="oe_title">
-                        <label for="reference_catalog_id" class="oe_edit_only" string="Autocompletar Referencia"/>
-                        <field name="reference_catalog_id" options="{'no_create': True, 'no_open': True}" 
-                               placeholder="Seleccione identificador disponible..." 
-                               domain="[('transport_type', '=', transport_type)]"
-                               readonly="state == 'confirmed'"/>
-                        <h1><field name="name" placeholder="Referencia (Ej: GUIA-001)"/></h1>
+                        <label for="reference_id" class="oe_edit_only" string="Referencia"/>
+                        <h1>
+                            <field name="reference_id" options="{'no_create': True, 'no_open': True}" 
+                                   placeholder="Seleccione Guía o Manifiesto..." 
+                                   domain="[('transport_type', '=', transport_type)]"
+                                   readonly="state == 'confirmed'" required="1"/>
+                        </h1>
+                        <field name="name" invisible="1"/>
                     </div>
                     <group>
                         <group>

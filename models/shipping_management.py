@@ -21,13 +21,13 @@ class ShippingManagement(models.Model):
 
     name = fields.Char(string='Referencia', required=True, copy=False, tracking=True)
     
-    reference_catalog_id = fields.Many2one('shipping.reference.catalog', string='Seleccionar Identificador', 
-                                           help="Seleccione un número de referencia disponible del catálogo")
+    reference_id = fields.Many2one('shipping.reference.catalog', string='Referencia (Catálogo)', 
+                                   help="Seleccione un número de referencia del catálogo", tracking=True)
 
-    @api.onchange('reference_catalog_id')
-    def _onchange_reference_catalog_id(self):
-        if self.reference_catalog_id:
-            self.name = self.reference_catalog_id.name
+    @api.onchange('reference_id')
+    def _onchange_reference_id(self):
+        if self.reference_id:
+            self.name = self.reference_id.name
 
     state = fields.Selection([
         ('draft', 'Borrador'),
