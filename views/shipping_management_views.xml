@@ -32,7 +32,7 @@
                     </div>
                     <group>
                         <group>
-                            <field name="agencia_origen" readonly="state == 'confirmed'"/>
+                            <field name="agencia_origen" readonly="state == 'confirmed'" options="{'no_create': False}"/>
                             <field name="pais_id" readonly="state == 'confirmed'"/>
                             <field name="transport_type" widget="radio" readonly="state == 'confirmed'"/>
                             <field name="container_type_id" invisible="transport_type != 'sea'" 
@@ -42,7 +42,7 @@
                             <field name="consignatario_id" readonly="state == 'confirmed'"/>
                             <field name="awb" readonly="state == 'confirmed'"/>
                             <field name="date_shipping" readonly="state == 'confirmed'"/>
-                            <field name="carrier" readonly="state == 'confirmed'"/>
+                            <field name="carrier" readonly="state == 'confirmed'" options="{'no_create': False}"/>
                         </group>
                     </group>
                     <notebook>

@@ -176,7 +176,7 @@
                                                         <td style="width: 70%; vertical-align: top; border: none;">
                                                             <strong style="text-decoration: underline;">Solo para uso de la Aduana</strong><br/>
                                                             <strong>CUBANACAN</strong><br/>
-                                                            BUQUE: <span t-esc="o.carrier"/><br/>
+                                                            BUQUE: <span t-esc="o.carrier.name"/><br/>
                                                             FIRMA: _________________________________<br/>
                                                             MANIFIESTO: <span t-esc="o.name"/>
                                                         </td>

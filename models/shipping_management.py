@@ -21,7 +21,7 @@ class ShippingManagement(models.Model):
     date_shipping = fields.Date(string='Fecha de Envío', default=fields.Date.context_today, tracking=True)
     
     # Campos operativos (Excel)
-    agencia_origen = fields.Char(string='Agencia de Origen', tracking=True)
+    agencia_origen = fields.Many2one('res.partner', string='Agencia de Origen', tracking=True)
     pais_id = fields.Many2one('res.country', string='País', tracking=True)
     consignatario_id = fields.Many2one('res.partner', string='Consignatario', tracking=True)
     awb = fields.Char(string='AWB / BL / Contenedor', tracking=True)
@@ -30,7 +30,7 @@ class ShippingManagement(models.Model):
     container_type_id = fields.Many2one('shipping.container.type', string='Contenedor', 
         readonly=False) 
     
-    carrier = fields.Char(string='Naviera / Aerolínea', tracking=True)
+    carrier = fields.Many2one('res.partner', string='Naviera / Aerolínea', tracking=True)
 
     # Campo de Compañía para soporte multi-empresa y reportes
     company_id = fields.Many2one('res.company', string='Compañía', required=True, 
