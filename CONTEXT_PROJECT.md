@@ -32,7 +32,7 @@ modulo_gestion_envio/
 
 ## 4. Requisitos y Reglas de Negocio Clave
 1. **Seguridad de Roles:** Admin (Confirmar) y Tráfico (Líneas).
-2. **Generación de Código:** Secuencia estricta asignada únicamente al confirmar.
+2. **Generación de Código:** Secuencia asignada inmediatamente al crear la línea (admite saltos de secuencia).
 3. **Reportes (CRÍTICO - Diseño HBL):** - El HBL debe generar **3 copias idénticas por bulto** e imprimir **2 copias por hoja A4**.
    - **Maquetación (Frontend):** Cuadrícula estricta con tablas HTML (`border-collapse: collapse`).
    - **Selección de Impresión:** Posibilidad de marcar/desmarcar bultos específicos para imprimir solo sus HBLs.

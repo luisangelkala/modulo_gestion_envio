@@ -14,7 +14,7 @@ class ShippingManagementLine(models.Model):
     receiver_id = fields.Many2one('res.partner', string='Destinatario', required=True)
     
     # Código de bulto con valor temporal. Se asigna al confirmar el envío.
-    package_code = fields.Char(string='Código Paquete', default='Nuevo', readonly=True, copy=False)
+    package_code = fields.Char(string='Código Paquete', default=lambda self: self.env['ir.sequence'].next_by_code('shipping.management'), readonly=True, copy=False)
     
     # Nuevos campos de detalle de carga
     description = fields.Char(string='Mercancía')
@@ -32,13 +32,6 @@ class ShippingManagementLine(models.Model):
     def _compute_volume(self):
         for line in self:
             line.volume = line.length * line.width * line.height
-
-    @api.model
-    def create(self, vals):
-        """ Asignar secuencia inmediatamente al crear la línea """
-        if vals.get('package_code', 'Nuevo') == 'Nuevo':
-            vals['package_code'] = self.env['ir.sequence'].next_by_code('shipping.management') or 'N/A'
-        return super(ShippingManagementLine, self).create(vals)
 
     def action_duplicate_line(self):
         """ Botón para duplicar la línea actual """
