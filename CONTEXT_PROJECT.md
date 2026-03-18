@@ -35,6 +35,9 @@ modulo_gestion_envio/
 2. **Generación de Código:** Secuencia estricta asignada únicamente al confirmar.
 3. **Reportes (CRÍTICO - Diseño HBL):** - El HBL debe generar **3 copias idénticas por bulto** e imprimir **2 copias por hoja A4**.
    - **Maquetación (Frontend):** Cuadrícula estricta con tablas HTML (`border-collapse: collapse`).
+   - **Selección de Impresión:** Posibilidad de marcar/desmarcar bultos específicos para imprimir solo sus HBLs.
+   - **Mapeo de Entidades:** 'Agencia de Origen' y 'Naviera/Aerolínea' deben ser contactos (`res.partner`), no texto simple.
+   - **Catálogo de Referencias:** Mantenimiento de identificadores (Guías Aéreas / Manifiestos) en Configuración para estandarizar el campo Referencia.
 
 ## 5. Hoja de Ruta y Objetivos Pendientes
 - [x] **Paso 1, 2 y 3: Interfaz, Ajuste Estructural y Seguridad.** (RESUELTO)
@@ -43,6 +46,10 @@ modulo_gestion_envio/
       - **Problema 2 (Encoding):** Reemplazar textos estáticos con tildes (Sólo, Colón, Panamá) por caracteres sin tildes o entidades HTML para evitar errores de codificación.
       - **Problema 3 (Márgenes):** Para que quepan 2 copias, se debe crear un `<record model="report.paperformat">` con márgenes mínimos (ej. top 10, bottom 10) y asignarlo al `<record id="action_report_shipping_bl" model="ir.actions.report">` usando el campo `paperformat_id`.
 - [ ] **Paso 4.2: Reporte PDF de Etiquetas.** (En espera).
+- [ ] **Paso 4.3: Refinamiento de Datos y Selección (NUEVO).**
+      - **Impresión Selectiva:** Añadir checkbox (`Boolean`) en las líneas de carga. El reporte HBL debe filtrar: imprimir seleccionados si existen, o todos si ninguno está marcado.
+      - **Campos Relacionales:** Convertir `agencia_origen` y `carrier` a `Many2one` (`res.partner`). Actualizar vistas y reportes acorde (acceder a `.name`).
+      - **Configuración de Referencias:** Crear modelo `shipping.document.template` (Nombre, Tipo) y menú en Configuración. En el formulario principal, permitir seleccionar este template para rellenar automáticamente el campo `name` (Referencia).
 - [ ] **Paso 5: Permisos (ACL).** Validar `ir.model.access.csv`.
 
 ## 6. REGLAS ESTRICTAS PARA CODE ASSIST

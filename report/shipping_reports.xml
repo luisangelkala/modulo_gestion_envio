@@ -60,7 +60,9 @@
             <t t-call="web.html_container">
                 <div class="page">
                     <t t-foreach="docs" t-as="o">
-                        <t t-foreach="o.line_ids" t-as="line">
+                        <!-- Lógica de impresión selectiva: Si hay marcados, imprime solo esos. Si no, imprime todos. -->
+                        <t t-set="lines_to_print" t-value="o.line_ids.filtered(lambda x: x.print_selected) or o.line_ids"/>
+                        <t t-foreach="lines_to_print" t-as="line">
                             <t t-foreach="[1, 2, 3]" t-as="copy_idx">
                                 <div class="hbl-article" style="position: relative; height: 48vh; margin-bottom: 1.5vh; box-sizing: border-box; page-break-inside: avoid;">
                                     

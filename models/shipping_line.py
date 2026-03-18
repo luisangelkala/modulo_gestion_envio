@@ -6,6 +6,9 @@ class ShippingManagementLine(models.Model):
 
     shipping_id = fields.Many2one('shipping.management', string='Envío', ondelete='cascade')
     
+    # Campo para filtrar impresión de HBL
+    print_selected = fields.Boolean(string='Imprimir', default=False)
+
     # Reemplazo de partner_id por remitente y destinatario
     sender_id = fields.Many2one('res.partner', string='Remitente', required=True)
     receiver_id = fields.Many2one('res.partner', string='Destinatario', required=True)

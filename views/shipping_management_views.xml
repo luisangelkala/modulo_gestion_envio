@@ -50,6 +50,7 @@
                             <field name="line_ids" readonly="state == 'confirmed'">
                                 <!-- Vista de Lista (resumen) -->
                                 <tree>
+                                    <field name="print_selected" widget="boolean_toggle" string="Imp."/>
                                     <field name="package_code"/>
                                     <field name="sender_id"/>
                                     <field name="receiver_id"/>
@@ -63,6 +64,7 @@
                                 <form>
                                     <sheet>
                                         <group>
+                                            <field name="print_selected" widget="boolean_toggle"/>
                                             <group string="Contactos">
                                                 <field name="sender_id" required="1"/>
                                                 <field name="receiver_id" required="1"/>
