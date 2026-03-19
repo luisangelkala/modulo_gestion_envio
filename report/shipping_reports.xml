@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <record id="paperformat_shipping_label" model="report.paperformat">
+            <field name="name">Etiqueta 100x75mm</field>
+            <field name="default" eval="True"/>
+            <field name="format">custom</field>
+            <field name="page_height">75</field>
+            <field name="page_width">100</field>
+            <field name="orientation">Portrait</field>
+            <field name="margin_top">2</field>
+            <field name="margin_bottom">2</field>
+            <field name="margin_left">2</field>
+            <field name="margin_right">2</field>
+            <field name="header_line" eval="False"/>
+            <field name="header_spacing">0</field>
+            <field name="dpi">90</field>
+        </record>
+
         <record id="action_report_shipping_labels" model="ir.actions.report">
             <field name="name">Etiquetas de Bulto (QR)</field>
             <field name="model">shipping.management</field>
@@ -9,6 +25,7 @@
             <field name="report_file">modulo_gestion_envio.report_shipping_labels</field>
             <field name="print_report_name">'Etiquetas - %s' % object.name</field>
             <field name="binding_model_id" eval="False"/>
+            <field name="paperformat_id" ref="modulo_gestion_envio.paperformat_shipping_label"/>
         </record>
 
         <record id="paperformat_hbl_strict" model="report.paperformat">
@@ -39,21 +56,42 @@
 
         <template id="report_shipping_labels">
             <t t-call="web.basic_layout">
-                <div class="page">
-                    <t t-foreach="docs" t-as="o">
-                        <t t-foreach="o.line_ids" t-as="line">
-                            <div style="page-break-after: always; border: 2px solid black; padding: 15px; text-align: center; margin: 10px;">
-                                <h3>REF: <span t-field="o.name"/></h3>
-                                <div style="margin: 20px 0;">
-                                    <img t-att-src="'/report/barcode/?barcode_type=QR&amp;value=%s&amp;width=200&amp;height=200' % o.name" style="width:200px;height:200px"/>
-                                </div>
-                                <strong>Bulto ID:</strong> <span t-field="line.package_code"/><br/>
-                                <strong>Cliente:</strong> <span t-field="line.receiver_id.name"/><br/>
-                                <strong>Destino:</strong> <span t-field="line.receiver_id.city"/>, <span t-field="line.receiver_id.country_id.code"/>
+                <t t-foreach="docs" t-as="o">
+                    <t t-set="lines_to_print" t-value="o.line_ids.filtered(lambda l: l.print_selected) or o.line_ids"/>
+                    <t t-foreach="lines_to_print" t-as="line">
+                        <div class="page" style="page-break-after: always; padding: 0; margin: 0; width: 100%; font-family: Arial, sans-serif; font-size: 11px;">
+                            <div style="text-align: center; margin-bottom: 2px;">
+                                <h5 style="margin: 0; font-weight: bold;">CUBANACAN EXPRESS</h5>
+                                <h6 style="margin: 0;">ORDAZ INVESTMENT GROUP, S.A.</h6>
                             </div>
-                        </t>
+                            
+                            <table style="width: 100%; border-collapse: collapse; margin-top: 5px;">
+                                <tr>
+                                    <td style="width: 65%; vertical-align: top; padding-right: 5px;">
+                                        <strong>REMITENTE:</strong> <span t-field="line.sender_id.name"/><br/>
+                                        <strong>CONSIGNATARIO:</strong> <span t-field="line.receiver_id.name"/><br/>
+                                        <strong>ID:</strong> <span t-field="line.receiver_id.vat"/><br/>
+                                        <strong>DIRECCION:</strong> <span t-field="line.receiver_id.street"/>, <span t-field="line.receiver_id.city"/>, <span t-field="line.receiver_id.state_id.name"/><br/>
+                                        <strong>TELEFONO:</strong> <span t-field="line.receiver_id.phone"/><br/>
+                                        <strong>DESCRIPCION:</strong> <span t-field="line.description"/><br/>
+                                        <strong>CLASIFICACION:</strong> ENVIO
+                                    </td>
+                                    <td style="width: 35%; vertical-align: top; text-align: center;">
+                                        <img t-att-src="'/report/barcode/?type=QR&amp;value=%s&amp;width=80&amp;height=80' % line.package_code" style="width: 80px; height: 80px;"/><br/>
+                                        <strong>PESO:</strong> <span t-field="line.weight"/> Kg<br/>
+                                        <strong>PIEZAS:</strong> 1<br/>
+                                        <strong>GUIA:</strong> <span t-field="o.name"/>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <div style="text-align: center; margin-top: 5px;">
+                                <img t-att-src="'/report/barcode/?type=Code128&amp;value=%s&amp;width=250&amp;height=40' % line.package_code" style="width: 250px; height: 40px;"/><br/>
+                                <span t-field="line.package_code"/>
+                            </div>
+                        </div>
                     </t>
-                </div>
+                </t>
             </t>
         </template>
 
