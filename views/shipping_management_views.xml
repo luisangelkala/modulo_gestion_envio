@@ -40,6 +40,8 @@
                     <button name="action_confirm" string="Confirmar" type="object" class="oe_highlight" 
                             invisible="state != 'draft'" groups="modulo_gestion_envio.group_shipping_manager"
                             confirm="¿Está seguro que desea confirmar este envío? Esta acción es irreversible."/>
+                    <button name="%(modulo_gestion_envio.action_report_shipping_labels)d" string="Imprimir Etiquetas" type="action" 
+                            class="btn-secondary" invisible="state == 'draft'"/>
                     <button name="action_print_bl" string="Imprimir HBL" type="object" class="oe_highlight" groups="modulo_gestion_envio.group_shipping_manager"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirmed"/>
                 </header>

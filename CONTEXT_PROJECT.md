@@ -41,10 +41,9 @@ modulo_gestion_envio/
 
 ## 5. Hoja de Ruta y Objetivos Pendientes
 - [x] **Paso 1, 2 y 3: Interfaz, Ajuste Estructural y Seguridad.** (RESUELTO)
-- [ ] **Paso 4.1: PULIDO FINAL - Reporte HBL (Formatos y Overlap).**
-      - **Problema 1 (Superposición):** El pie de página (Caja de Aduana y Fecha) tiene superposición de líneas porque wkhtmltopdf no soporta `display: flex`. Cambiar a una tabla anidada.
-      - **Problema 2 (Encoding):** Reemplazar textos estáticos con tildes (Sólo, Colón, Panamá) por caracteres sin tildes o entidades HTML para evitar errores de codificación.
-      - **Problema 3 (Márgenes):** Para que quepan 2 copias, se debe crear un `<record model="report.paperformat">` con márgenes mínimos (ej. top 10, bottom 10) y asignarlo al `<record id="action_report_shipping_bl" model="ir.actions.report">` usando el campo `paperformat_id`.
+- [x] **Paso 4.1: PULIDO FINAL - Reporte HBL.** (RESUELTO)
+      - Se ha corregido el layout del pie de página con tablas para evitar superposición.
+      - Se ha creado y asignado un `paperformat` con márgenes reducidos para optimizar la impresión.
 - [ ] **Paso 4.2: Reporte PDF de Etiquetas.** (En espera).
 - [x] **Paso 4.3: Refinamiento de Datos y Selección.** (RESUELTO)
       - **Impresión Selectiva:** Añadir checkbox (`Boolean`) en las líneas de carga. El reporte HBL debe filtrar: imprimir seleccionados si existen, o todos si ninguno está marcado.

@@ -8,6 +8,7 @@
             <field name="report_name">modulo_gestion_envio.report_shipping_labels</field>
             <field name="report_file">modulo_gestion_envio.report_shipping_labels</field>
             <field name="print_report_name">'Etiquetas - %s' % object.name</field>
+            <field name="binding_model_id" eval="False"/>
         </record>
 
         <record id="paperformat_hbl_strict" model="report.paperformat">
