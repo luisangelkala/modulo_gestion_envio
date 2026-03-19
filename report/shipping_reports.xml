@@ -80,7 +80,7 @@
                                                 <strong>CLASIFICACION:</strong> <span t-esc="line.shipping_type.upper() if line.shipping_type else ''"/>
                                             </td>
                                             <td style="width: 25%; vertical-align: top; text-align: center;">
-                                                <img t-if="line.qr_image" t-att-src="image_data_uri(line.qr_image)" style="width: 120px; height: 120px; margin-bottom: 5px;" alt="QR Code"/>
+                                                <img t-if="line.qr_image" t-att-src="image_data_uri(line.qr_image)" style="width: 150px; height: 150px; margin-bottom: 5px; image-rendering: crisp-edges; image-rendering: pixelated;" alt="QR Code"/>
                                                 <br/>
                                                 <strong>PESO:</strong> <span t-esc="line.weight"/> Kg<br/>
                                                 <strong>PIEZAS:</strong> 1<br/>
