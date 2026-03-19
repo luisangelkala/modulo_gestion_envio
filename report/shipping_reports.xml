@@ -2,12 +2,12 @@
 <odoo>
     <data>
         <record id="paperformat_shipping_label" model="report.paperformat">
-            <field name="name">Etiqueta Termica 4x6</field>
+            <field name="name">Etiqueta Termica 6x4 (Horizontal)</field>
             <field name="default" eval="True"/>
             <field name="format">custom</field>
-            <field name="page_height">150</field>
-            <field name="page_width">100</field>
-            <field name="orientation">Portrait</field>
+            <field name="page_width">152</field>
+            <field name="page_height">101</field>
+            <field name="orientation">Landscape</field>
             <field name="margin_top">2</field>
             <field name="margin_bottom">2</field>
             <field name="margin_left">2</field>
@@ -59,34 +59,43 @@
                 <t t-foreach="docs" t-as="o">
                     <t t-set="lines_to_print" t-value="o.line_ids.filtered(lambda l: l.print_selected) or o.line_ids"/>
                     <t t-foreach="lines_to_print" t-as="line">
-                        <div class="page" style="width: 100%; height: 100%; padding: 2mm; box-sizing: border-box; font-family: Arial, sans-serif; page-break-after: always;">
+                        <div class="page" style="width: 100%; height: 100%; padding: 4mm; box-sizing: border-box; font-family: Arial, sans-serif; page-break-after: always; display: block;">
                             <meta charset="utf-8"/>
-                            <div style="text-align: center; margin-bottom: 10px;">
-                                <h3 style="margin: 0; font-weight: bold;">CUBANACAN EXPRESS</h3>
-                                <h4 style="margin: 0;">ORDAZ INVESTMENT GROUP, S.A.</h4>
+
+                            <div style="text-align: center; margin-bottom: 5px;">
+                                <h3 style="margin: 0; font-weight: bold; font-size: 18px;">CUBANACAN EXPRESS</h3>
+                                <h4 style="margin: 0; font-size: 14px;">ORDAZ INVESTMENT GROUP, S.A.</h4>
                             </div>
 
-                            <div style="font-size: 14px; line-height: 1.5; margin-bottom: 10px;">
-                                <strong>REMITENTE:</strong> <span t-esc="line.sender_id.name"/><br/>
-                                <strong>CONSIGNATARIO:</strong> <span t-esc="line.receiver_id.name"/><br/>
-                                <strong>ID:</strong> <span t-esc="line.receiver_id.vat"/><br/>
-                                <strong>DIRECCION:</strong> <span t-esc="line.receiver_id.street"/>, <span t-if="line.receiver_id.street2" t-esc="line.receiver_id.street2"/> <span t-if="line.receiver_id.street2">, </span> <span t-esc="line.receiver_id.city"/>, <span t-esc="line.receiver_id.state_id.name"/><br/>
-                                <strong>TELEFONO:</strong> <span t-esc="line.receiver_id.phone"/><br/>
-                                <strong>DESCRIPCION:</strong> <span t-esc="line.description"/><br/>
-                                <strong>CLASIFICACION:</strong> <span t-esc="line.shipping_type.upper() if line.shipping_type else ''"/>
-                            </div>
+                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 5px;">
+                                <tr>
+                                    <td style="width: 70%; vertical-align: top; padding-right: 15px; line-height: 1.5; font-size: 13px;">
+                                        <strong>REMITENTE:</strong> <span t-esc="line.sender_id.name"/><br/>
+                                        <strong>CONSIGNATARIO:</strong> <strong style="font-size: 15px;" t-esc="line.receiver_id.name"/><br/>
+                                        <strong>ID:</strong> <span t-esc="line.receiver_id.vat"/><br/>
+                                        <strong>DIRECCION:</strong> 
+                                        <span t-esc="line.receiver_id.street"/>
+                                        <t t-if="line.receiver_id.street2">, <span t-esc="line.receiver_id.street2"/></t>
+                                        <t t-if="line.receiver_id.city">, <span t-esc="line.receiver_id.city"/></t>
+                                        <t t-if="line.receiver_id.state_id">, <span t-esc="line.receiver_id.state_id.name"/></t><br/>
+                                        <strong>TELEFONO:</strong> <span t-esc="line.receiver_id.phone"/><br/>
+                                        <strong>DESCRIPCION:</strong> <span t-esc="line.description"/><br/>
+                                        <strong>CLASIFICACION:</strong> <span t-esc="line.shipping_type.upper() if line.shipping_type else ''"/>
+                                    </td>
+                                    <td style="width: 30%; vertical-align: top; text-align: center;">
+                                        <img t-if="line.qr_image" t-att-src="image_data_uri(line.qr_image)" style="width: 110px; height: 110px; display: inline-block; image-rendering: crisp-edges; image-rendering: pixelated;" alt="QR"/><br/>
+                                        <div style="font-size: 12px; margin-top: 5px; text-align: left; padding-left: 10px;">
+                                            <strong>PESO:</strong> <span t-esc="line.weight"/> Kg<br/>
+                                            <strong>PIEZAS:</strong> 1<br/>
+                                            <strong>GUIA:</strong> <span t-esc="o.name"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
 
                             <div style="text-align: center;">
-                                <img t-if="line.qr_image" t-att-src="image_data_uri(line.qr_image)" style="width: 250px; height: 250px; margin: 10px auto; display: block;" alt="QR"/>
-                                <div style="font-size: 16px; font-weight: bold; margin-bottom: 10px;">
-                                    PESO: <span t-esc="line.weight"/> Kg | PIEZAS: 1<br/>
-                                    GUIA: <span t-esc="o.name"/>
-                                </div>
-                            </div>
-
-                            <div style="text-align: center; margin-top: 15px;">
-                                <span t-field="line.package_code" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 300, 'height': 60, 'img_style': 'width: 300px; height: 60px; margin: 0 auto; image-rendering: crisp-edges; image-rendering: pixelated;'}"/><br/>
-                                <span t-esc="line.package_code" style="font-size: 14px; font-weight: bold;"/>
+                                <span t-field="line.package_code" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 350, 'height': 50, 'img_style': 'width: 350px; height: 50px; margin: 0 auto; image-rendering: crisp-edges; image-rendering: pixelated;'}"/><br/>
+                                <span style="font-size: 16px; font-weight: bold; letter-spacing: 2px;" t-esc="line.package_code"/>
                             </div>
                         </div>
                     </t>
