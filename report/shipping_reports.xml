@@ -61,20 +61,20 @@
                         <t t-set="lines_to_print" t-value="o.line_ids.filtered(lambda l: l.print_selected) or o.line_ids"/>
                         <t t-foreach="lines_to_print" t-as="line">
                             
-                            <div style="height: 32vh; width: 100%; box-sizing: border-box; padding: 15px 0; border-bottom: 1px dashed #ccc; page-break-inside: avoid; display: flex; justify-content: center; overflow: hidden;">
+                            <div style="height: 32vh; width: 100%; box-sizing: border-box; padding: 15px 0; border-bottom: 1px dashed #ccc; page-break-inside: avoid;">
                                 
-                                <div style="width: 18cm; height: 100%; margin: 0 auto; border: 1px solid #000; padding: 15px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 13px;">
+                                <div style="width: 18cm; margin: 0 auto; border: 1px solid #000; padding: 10px; box-sizing: border-box; font-family: Arial, sans-serif; font-size: 12px;">
                                     
-                                    <div style="text-align: center; margin-bottom: 12px;">
-                                        <h5 style="margin: 0; font-weight: bold; font-size: 18px;">CUBANACAN EXPRESS</h5>
-                                        <h6 style="margin: 0; font-size: 14px;">ORDAZ INVESTMENT GROUP, S.A.</h6>
+                                    <div style="text-align: center; margin-bottom: 8px;">
+                                        <h5 style="margin: 0; font-weight: bold; font-size: 15px;">CUBANACAN EXPRESS</h5>
+                                        <h6 style="margin: 0; font-size: 12px;">ORDAZ INVESTMENT GROUP, S.A.</h6>
                                     </div>
 
-                                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+                                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 5px;">
                                         <tr>
-                                            <td style="width: 75%; vertical-align: top; padding-right: 15px; line-height: 1.4;">
+                                            <td style="width: 75%; vertical-align: top; padding-right: 5px; line-height: 1.3;">
                                                 <strong>REMITENTE:</strong> <span t-esc="line.sender_id.name"/><br/>
-                                                <strong>CONSIGNATARIO:</strong> <strong style="font-size: 15px;" t-esc="line.receiver_id.name"/><br/>
+                                                <strong>CONSIGNATARIO:</strong> <strong style="font-size: 13px;" t-esc="line.receiver_id.name"/><br/>
                                                 <strong>ID:</strong> <span t-esc="line.receiver_id.vat"/><br/>
                                                 <strong>DIRECCION:</strong> 
                                                 <span t-esc="line.receiver_id.street"/>
@@ -86,8 +86,8 @@
                                                 <strong>CLASIFICACION:</strong> ENVIO
                                             </td>
                                             <td style="width: 25%; vertical-align: top; text-align: center;">
-                                                <img t-if="line.package_code" t-att-src="'/report/barcode/QR/%s' % line.package_code" style="width: 95px; height: 95px;" alt="QR"/><br/>
-                                                <div style="font-size: 12px; margin-top: 5px; text-align: left; padding-left: 10px;">
+                                                <img t-att-src="'/report/barcode/?barcode_type=QR&amp;value=%s&amp;width=80&amp;height=80' % line.package_code" style="width: 80px; height: 80px;" alt="QR"/><br/>
+                                                <div style="font-size: 10px; margin-top: 2px; text-align: left; padding-left: 5px;">
                                                     <strong>PESO:</strong> <span t-esc="line.weight"/> Kg<br/>
                                                     <strong>PIEZAS:</strong> 1<br/>
                                                     <strong>GUIA:</strong> <span t-esc="o.name"/>
@@ -96,12 +96,12 @@
                                         </tr>
                                     </table>
 
-                                    <div style="text-align: center; margin-top: 5px;">
-                                        <img t-if="line.package_code" t-att-src="'/report/barcode/Code128/%s' % line.package_code" style="width: 300px; height: 50px;" alt="Barcode"/><br/>
-                                        <span style="font-size: 16px; font-weight: bold; letter-spacing: 2px;" t-esc="line.package_code"/>
+                                    <div style="text-align: center;">
+                                        <img t-att-src="'/report/barcode/?barcode_type=Code128&amp;value=%s&amp;width=250&amp;height=40' % line.package_code" style="width: 250px; height: 40px;" alt="Code128"/><br/>
+                                        <span style="font-size: 13px; font-weight: bold; letter-spacing: 1px;" t-esc="line.package_code"/>
                                     </div>
-                                    
                                 </div>
+
                             </div>
                         </t>
                     </t>
