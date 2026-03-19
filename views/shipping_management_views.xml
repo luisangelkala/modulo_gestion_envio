@@ -108,6 +108,7 @@
                                             <group string="Contactos">
                                                 <field name="sender_id" required="1"/>
                                                 <field name="receiver_id" required="1"/>
+                                                <field name="shipping_type"/>
                                             </group>
                                             <group string="Detalle de Carga">
                                                 <field name="package_code"/>
