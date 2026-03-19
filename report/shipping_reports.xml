@@ -58,6 +58,7 @@
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
                     <div class="page">
+                        <meta charset="utf-8"/>
                         <t t-set="lines_to_print" t-value="o.line_ids.filtered(lambda l: l.print_selected) or o.line_ids"/>
                         <t t-foreach="lines_to_print" t-as="line">
                             <div style="height: 32vh; width: 100%; box-sizing: border-box; padding: 10px; border-bottom: 1px dashed #999; page-break-inside: avoid; overflow: hidden;">
@@ -79,7 +80,7 @@
                                                 <strong>CLASIFICACION:</strong> ENVIO
                                             </td>
                                             <td style="width: 25%; vertical-align: top; text-align: center;">
-                                                <span t-field="line.package_code" t-options="{'widget': 'barcode', 'symbology': 'QR', 'width': 90, 'height': 90}" style="display: inline-block; width: 90px; height: 90px;"/><br/>
+                                            <span t-field="line.package_code" t-options="{'widget': 'barcode', 'symbology': 'QR', 'width': 75, 'height': 75}" style="display: inline-block; width: 75px; height: 75px;"/><br/>
                                                 <strong>PESO:</strong> <span t-esc="line.weight"/> Kg<br/>
                                                 <strong>PIEZAS:</strong> 1<br/>
                                                 <strong>GUIA:</strong> <span t-esc="o.name"/>
@@ -88,7 +89,7 @@
                                     </table>
 
                                     <div style="text-align: center; margin-top: 5px;">
-                                        <span t-field="line.package_code" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 280, 'height': 45}" style="display: inline-block; width: 280px; height: 45px;"/><br/>
+                                    <span t-field="line.package_code" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 220, 'height': 40}" style="display: inline-block; width: 220px; height: 40px; margin: 0 auto;"/><br/>
                                         <span t-esc="line.package_code"/>
                                     </div>
                                 </div>
