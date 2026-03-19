@@ -80,7 +80,7 @@
                                                 <strong>CLASIFICACION:</strong> ENVIO
                                             </td>
                                             <td style="width: 25%; vertical-align: top; text-align: center;">
-                                            <span t-field="line.package_code" t-options="{'widget': 'barcode', 'symbology': 'QR', 'width': 75, 'height': 75}" style="display: inline-block; width: 75px; height: 75px;"/><br/>
+                                            <span t-field="line.package_code" t-options="{'widget': 'barcode', 'symbology': 'QR', 'width': 300, 'height': 300}" style="display: inline-block; width: 65px; height: 65px;"/><br/>
                                                 <strong>PESO:</strong> <span t-esc="line.weight"/> Kg<br/>
                                                 <strong>PIEZAS:</strong> 1<br/>
                                                 <strong>GUIA:</strong> <span t-esc="o.name"/>
