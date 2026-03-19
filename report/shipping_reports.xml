@@ -104,6 +104,7 @@
         <template id="report_shipping_hbl">
             <t t-call="web.html_container">
                 <div class="page">
+                    <meta charset="utf-8"/>
                     <t t-foreach="docs" t-as="o">
                         <!-- Lógica de impresión selectiva: Si hay marcados, imprime solo esos. Si no, imprime todos. -->
                         <t t-set="lines_to_print" t-value="o.line_ids.filtered(lambda x: x.print_selected) or o.line_ids"/>
@@ -122,7 +123,7 @@
                                             <td style="border: 1px solid black; width: 30%; padding: 0;">
                                                 <div style="border-bottom: 1px solid black; padding: 4px;">
                                                     <strong>BOOKING NUMBER / B/L NUMBER</strong><br/>
-                                                    <span t-field="o.name"/>
+                                                    <span t-esc="o.name"/>
                                                     <div style="float: right; font-size: 8px;">COPY <t t-esc="copy_idx"/>/3</div>
                                                 </div>
                                                 <div style="padding: 4px; background-color: #f9f9f9;">
