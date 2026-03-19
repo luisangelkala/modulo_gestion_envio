@@ -33,7 +33,7 @@ modulo_gestion_envio/
 ## 4. Requisitos y Reglas de Negocio Clave
 1. **Seguridad de Roles:** Admin (Confirmar) y Tráfico (Líneas).
 2. **Generación de Código:** Secuencia asignada inmediatamente al crear la línea (admite saltos de secuencia).
-3. **Reportes (CRÍTICO):** El HBL genera 3 copias idénticas por bulto e imprime 2 copias por hoja A4. Las Etiquetas generan 1 copia por bulto en formato térmico (100x75mm) con QR y Code128 nativo de Odoo.
+3. **Reportes (CRÍTICO):** El HBL genera 3 copias idénticas por bulto e imprime 2 copias por hoja A4. Las Etiquetas deben imprimir **3 copias diferentes por hoja A4** aprovechando el espacio al máximo.
 4. **Selección de Impresión:** Ambos reportes (HBL y Etiquetas) deben filtrar e imprimir solo las líneas seleccionadas con el checkbox, o todas si ninguna está marcada.
 5. **Mapeo de Entidades:** 'Agencia de Origen' y 'Naviera/Aerolínea' deben ser contactos (`res.partner`), no texto simple.
 6. **Catálogo de Referencias:** Mantenimiento de identificadores (Guías Aéreas / Manifiestos) en Configuración para estandarizar el campo Referencia.
@@ -43,12 +43,11 @@ modulo_gestion_envio/
 - [x] **Paso 4.1: PULIDO FINAL - Reporte HBL.** (RESUELTO) Se ha corregido el layout del pie de página con tablas para evitar superposición. Se ha creado y asignado un `paperformat` con márgenes reducidos.
 - [x] **Paso 4.3: Refinamiento de Datos y Selección.** (RESUELTO) Impresión Selectiva con checkbox. Campos Relacionales convertidos a Many2one. Catálogo de Referencias implementado.
 - [x] **Paso 5: Permisos (ACL).** (RESUELTO) Creado `ir.model.access.csv` con permisos para Management, Lines, Container Types y Catálogo de Referencias.
-- [ ] **Paso 4.2: MAQUETACIÓN PIXEL-PERFECT - Etiquetas.**
-      A. Crear `<record model="report.paperformat" id="paperformat_shipping_label">` (100x75mm, márgenes en 2).
-      B. Asignar el paperformat a `action_report_shipping_labels`.
-      C. Maquetar `<template id="report_shipping_labels">` usando tablas HTML estrictas.
-      D. Implementar lógica de impresión selectiva: iterar sobre `o.line_ids.filtered(lambda l: l.imprimir) or o.line_ids`.
-      E. Generar Códigos de Barras: Usar `<img>` hacia el endpoint `/report/barcode/` de Odoo para el QR y el Code128.
+- [ ] **Paso 4.2: MAQUETACIÓN PIXEL-PERFECT - Etiquetas (Optimización A4).**
+      A. **Paperformat:** Reutilizar el `paperformat_hbl_strict` (A4 sin márgenes) asignándolo a `action_report_shipping_labels`. No crear uno nuevo.
+      B. **Filtro:** Iterar sobre `o.line_ids.filtered(lambda l: l.imprimir) or o.line_ids`.
+      C. **Maquetación 3 por hoja:** Usar `web.html_container`. Cada etiqueta debe estar en un `<div style="height: 32vh; border-bottom: 1px dashed #999; box-sizing: border-box; page-break-inside: avoid; overflow: hidden;">` para que Odoo acomode exactamente 3 por página con una línea de corte.
+      D. **Corrección de Códigos:** El endpoint de Odoo exige el parámetro `barcode_type` (NO `type`). Hay que corregir las URLs de las imágenes a `barcode_type=QR` y `barcode_type=Code128`.
 
 ## 6. REGLAS ESTRICTAS PARA CODE ASSIST
 1. **Pedir Autorización:** Propón la solución antes del código final.
