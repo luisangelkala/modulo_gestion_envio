@@ -60,44 +60,52 @@
                     <t t-set="lines_to_print" t-value="o.line_ids.filtered(lambda l: l.print_selected) or o.line_ids"/>
                     <t t-foreach="lines_to_print" t-as="line">
                         
-                        <div class="page" style="width: 100%; padding: 4mm; box-sizing: border-box; font-family: Arial, sans-serif; page-break-inside: avoid; page-break-after: always; clear: both;">
-                            <meta charset="utf-8"/>
+                        <div class="page" style="width: 100%; height: 99mm; margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; overflow: hidden; page-break-inside: avoid;">
                             
-                            <div style="text-align: center; margin-bottom: 8px;">
-                                <h3 style="margin: 0; font-weight: bold; font-size: 18px;">CUBANACAN EXPRESS</h3>
-                                <h4 style="margin: 0; font-size: 14px;">ORDAZ INVESTMENT GROUP, S.A.</h4>
-                            </div>
-
-                            <table style="width: 100%; border-collapse: collapse; margin-bottom: 5px;">
+                            <table style="width: 100%; height: 100%; border-collapse: collapse;">
                                 <tr>
-                                    <td style="width: 65%; vertical-align: top; padding-right: 10px; line-height: 1.6; font-size: 13px;">
-                                        <strong>REMITENTE:</strong> <span t-esc="line.sender_id.name"/><br/>
-                                        <strong>CONSIGNATARIO:</strong> <strong style="font-size: 15px;" t-esc="line.receiver_id.name"/><br/>
-                                        <strong>ID:</strong> <span t-esc="line.receiver_id.vat"/><br/>
-                                        <strong>DIRECCION:</strong> 
-                                        <span t-esc="line.receiver_id.street"/>
-                                        <t t-if="line.receiver_id.street2">, <span t-esc="line.receiver_id.street2"/></t>
-                                        <t t-if="line.receiver_id.city">, <span t-esc="line.receiver_id.city"/></t>
-                                        <t t-if="line.receiver_id.state_id">, <span t-esc="line.receiver_id.state_id.name"/></t><br/>
-                                        <strong>TELEFONO:</strong> <span t-esc="line.receiver_id.phone"/><br/>
-                                        <strong>DESCRIPCION:</strong> <span t-esc="line.description"/><br/>
-                                        <strong>CLASIFICACION:</strong> <span t-esc="line.shipping_type.upper() if line.shipping_type else ''"/>
-                                    </td>
-                                    <td style="width: 35%; vertical-align: top; text-align: center;">
-                                        <img t-if="line.qr_image" t-att-src="image_data_uri(line.qr_image)" style="width: 110px; height: 110px; display: inline-block; image-rendering: crisp-edges; image-rendering: pixelated;" alt="QR"/><br/>
-                                        <div style="font-size: 12px; margin-top: 5px; text-align: left; padding-left: 10px; line-height: 1.3;">
-                                            <strong>PESO:</strong> <span t-esc="line.weight"/> Kg<br/>
-                                            <strong>PIEZAS:</strong> 1<br/>
-                                            <strong>GUIA:</strong> <span t-esc="o.name"/>
+                                    <td style="vertical-align: middle; padding: 4mm;">
+                                        <meta charset="utf-8"/>
+                                        
+                                        <div style="text-align: center; margin-bottom: 8px;">
+                                            <h3 style="margin: 0; font-weight: bold; font-size: 18px;">CUBANACAN EXPRESS</h3>
+                                            <h4 style="margin: 0; font-size: 14px;">ORDAZ INVESTMENT GROUP, S.A.</h4>
                                         </div>
+
+                                        <table style="width: 100%; border-collapse: collapse; margin-bottom: 5px; text-align: left;">
+                                            <tr>
+                                                <td style="width: 65%; vertical-align: top; padding-right: 10px; line-height: 1.6; font-size: 13px;">
+                                                    <strong>REMITENTE:</strong> <span t-esc="line.sender_id.name"/><br/>
+                                                    <strong>CONSIGNATARIO:</strong> <strong style="font-size: 15px;" t-esc="line.receiver_id.name"/><br/>
+                                                    <strong>ID:</strong> <span t-esc="line.receiver_id.vat"/><br/>
+                                                    <strong>DIRECCION:</strong> 
+                                                    <span t-esc="line.receiver_id.street"/>
+                                                    <t t-if="line.receiver_id.street2">, <span t-esc="line.receiver_id.street2"/></t>
+                                                    <t t-if="line.receiver_id.city">, <span t-esc="line.receiver_id.city"/></t>
+                                                    <t t-if="line.receiver_id.state_id">, <span t-esc="line.receiver_id.state_id.name"/></t><br/>
+                                                    <strong>TELEFONO:</strong> <span t-esc="line.receiver_id.phone"/><br/>
+                                                    <strong>DESCRIPCION:</strong> <span t-esc="line.description"/><br/>
+                                                    <strong>CLASIFICACION:</strong> <span t-esc="line.shipping_type.upper() if line.shipping_type else ''"/>
+                                                </td>
+                                                <td style="width: 35%; vertical-align: top; text-align: center;">
+                                                    <img t-if="line.qr_image" t-att-src="image_data_uri(line.qr_image)" style="width: 110px; height: 110px; display: inline-block; image-rendering: crisp-edges; image-rendering: pixelated;" alt="QR"/><br/>
+                                                    <div style="font-size: 12px; margin-top: 5px; text-align: left; padding-left: 10px; line-height: 1.3;">
+                                                        <strong>PESO:</strong> <span t-esc="line.weight"/> Kg<br/>
+                                                        <strong>PIEZAS:</strong> 1<br/>
+                                                        <strong>GUIA:</strong> <span t-esc="o.name"/>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                        <div style="text-align: center; width: 100%; margin-top: 10px;">
+                                            <span t-field="line.package_code" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 340, 'height': 50, 'img_style': 'width: 340px; height: 50px; margin: 0 auto; image-rendering: crisp-edges; image-rendering: pixelated;'}"/><br/>
+                                            <span style="font-size: 16px; font-weight: bold; letter-spacing: 2px;" t-esc="line.package_code"/>
+                                        </div>
+
                                     </td>
                                 </tr>
                             </table>
-
-                            <div style="text-align: center; width: 100%; margin-top: 10px;">
-                                <span t-field="line.package_code" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 340, 'height': 50, 'img_style': 'width: 340px; height: 50px; margin: 0 auto; image-rendering: crisp-edges; image-rendering: pixelated;'}"/><br/>
-                                <span style="font-size: 16px; font-weight: bold; letter-spacing: 2px;" t-esc="line.package_code"/>
-                            </div>
                             
                         </div>
                     </t>
