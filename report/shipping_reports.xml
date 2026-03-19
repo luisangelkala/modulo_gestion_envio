@@ -60,35 +60,37 @@
                     <div class="page">
                         <t t-set="lines_to_print" t-value="o.line_ids.filtered(lambda l: l.print_selected) or o.line_ids"/>
                         <t t-foreach="lines_to_print" t-as="line">
-                            <div style="height: 32vh; width: 100%; box-sizing: border-box; padding: 15px 20px; border-bottom: 1px dashed #999; page-break-inside: avoid; overflow: hidden;">
-                                <div style="text-align: center; margin-bottom: 5px;">
-                                    <h5 style="margin: 0; font-weight: bold;">CUBANACAN EXPRESS</h5>
-                                    <h6 style="margin: 0;">ORDAZ INVESTMENT GROUP, S.A.</h6>
-                                </div>
+                            <div style="height: 32vh; width: 100%; box-sizing: border-box; padding: 10px; border-bottom: 1px dashed #999; page-break-inside: avoid; overflow: hidden;">
+                                <div style="width: 18cm; margin: 0 auto; border: 1px solid black; padding: 15px; box-sizing: border-box;">
+                                    <div style="text-align: center; margin-bottom: 5px;">
+                                        <h5 style="margin: 0; font-weight: bold;">CUBANACAN EXPRESS</h5>
+                                        <h6 style="margin: 0;">ORDAZ INVESTMENT GROUP, S.A.</h6>
+                                    </div>
 
-                                <table style="width: 100%; border-collapse: collapse;">
-                                    <tr>
-                                        <td style="width: 75%; vertical-align: top; padding-right: 10px;">
-                                            <strong>REMITENTE:</strong> <span t-field="line.sender_id.name"/><br/>
-                                            <strong>CONSIGNATARIO:</strong> <span t-field="line.receiver_id.name"/><br/>
-                                            <strong>ID:</strong> <span t-field="line.receiver_id.vat"/><br/>
-                                            <strong>DIRECCION:</strong> <span t-field="line.receiver_id.street"/>, <span t-if="line.receiver_id.street2" t-field="line.receiver_id.street2"/> <span t-if="line.receiver_id.street2">, </span> <span t-field="line.receiver_id.city"/>, <span t-field="line.receiver_id.state_id.name"/><br/>
-                                            <strong>TELEFONO:</strong> <span t-field="line.receiver_id.phone"/><br/>
-                                            <strong>DESCRIPCION:</strong> <span t-field="line.description"/><br/>
-                                            <strong>CLASIFICACION:</strong> ENVIO
-                                        </td>
-                                        <td style="width: 25%; vertical-align: top; text-align: center;">
-                                            <span t-field="line.package_code" t-options="{'widget': 'barcode', 'symbology': 'QR', 'width': 90, 'height': 90}" style="display: inline-block; width: 90px; height: 90px;"/><br/>
-                                            <strong>PESO:</strong> <span t-field="line.weight"/> Kg<br/>
-                                            <strong>PIEZAS:</strong> 1<br/>
-                                            <strong>GUIA:</strong> <span t-field="o.name"/>
-                                        </td>
-                                    </tr>
-                                </table>
+                                    <table style="width: 100%; border-collapse: collapse;">
+                                        <tr>
+                                            <td style="width: 75%; vertical-align: top; padding-right: 10px; line-height: 1.6;">
+                                                <strong>REMITENTE:</strong> <span t-esc="line.sender_id.name"/><br/>
+                                                <strong>CONSIGNATARIO:</strong> <span t-esc="line.receiver_id.name"/><br/>
+                                                <strong>ID:</strong> <span t-esc="line.receiver_id.vat"/><br/>
+                                                <strong>DIRECCION:</strong> <span t-esc="line.receiver_id.street"/>, <span t-if="line.receiver_id.street2" t-esc="line.receiver_id.street2"/> <span t-if="line.receiver_id.street2">, </span> <span t-esc="line.receiver_id.city"/>, <span t-esc="line.receiver_id.state_id.name"/><br/>
+                                                <strong>TELEFONO:</strong> <span t-esc="line.receiver_id.phone"/><br/>
+                                                <strong>DESCRIPCION:</strong> <span t-esc="line.description"/><br/>
+                                                <strong>CLASIFICACION:</strong> ENVIO
+                                            </td>
+                                            <td style="width: 25%; vertical-align: top; text-align: center;">
+                                                <span t-field="line.package_code" t-options="{'widget': 'barcode', 'symbology': 'QR', 'width': 90, 'height': 90}" style="display: inline-block; width: 90px; height: 90px;"/><br/>
+                                                <strong>PESO:</strong> <span t-esc="line.weight"/> Kg<br/>
+                                                <strong>PIEZAS:</strong> 1<br/>
+                                                <strong>GUIA:</strong> <span t-esc="o.name"/>
+                                            </td>
+                                        </tr>
+                                    </table>
 
-                                <div style="text-align: center; margin-top: 5px;">
-                                    <span t-field="line.package_code" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 280, 'height': 45}" style="display: inline-block; width: 280px; height: 45px;"/><br/>
-                                    <span t-field="line.package_code"/>
+                                    <div style="text-align: center; margin-top: 5px;">
+                                        <span t-field="line.package_code" t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 280, 'height': 45}" style="display: inline-block; width: 280px; height: 45px;"/><br/>
+                                        <span t-esc="line.package_code"/>
+                                    </div>
                                 </div>
                             </div>
                         </t>
