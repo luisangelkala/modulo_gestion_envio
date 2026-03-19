@@ -77,7 +77,7 @@
                                                 <strong>DIRECCION:</strong> <span t-esc="line.receiver_id.street"/>, <span t-if="line.receiver_id.street2" t-esc="line.receiver_id.street2"/> <span t-if="line.receiver_id.street2">, </span> <span t-esc="line.receiver_id.city"/>, <span t-esc="line.receiver_id.state_id.name"/><br/>
                                                 <strong>TELEFONO:</strong> <span t-esc="line.receiver_id.phone"/><br/>
                                                 <strong>DESCRIPCION:</strong> <span t-esc="line.description"/><br/>
-                                                <strong>CLASIFICACION:</strong> ENVIO
+                                                <strong>CLASIFICACION:</strong> <span t-esc="line.shipping_type.upper() if line.shipping_type else ''"/>
                                             </td>
                                             <td style="width: 25%; vertical-align: top; text-align: center;">
                                                 <img t-if="line.qr_image" t-att-src="image_data_uri(line.qr_image)" style="width: 120px; height: 120px; margin-bottom: 5px;" alt="QR Code"/>

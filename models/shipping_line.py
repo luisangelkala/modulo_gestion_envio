@@ -25,7 +25,7 @@ class ShippingManagementLine(models.Model):
     package_code = fields.Char(string='Código Paquete', default=lambda self: self.env['ir.sequence'].next_by_code('shipping.management'), readonly=True, copy=False)
     
     # QR Code generado en backend para alta calidad en PDF
-    qr_image = fields.Binary(string="QR Code", compute="_compute_qr_image", store=True)
+    qr_image = fields.Binary(string="QR Code", compute="_compute_qr_image")
 
     @api.depends('package_code')
     def _compute_qr_image(self):
