@@ -139,10 +139,36 @@ class ShippingManagement(models.Model):
         # Crear el archivo Excel en memoria
         output = io.BytesIO()
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
-        bold_format = workbook.add_format({'bold': True, 'bg_color': '#D3D3D3', 'border': 1})
+        
+        # Formatos
+        title_format = workbook.add_format({'bold': True, 'font_size': 14})
+        bold_format = workbook.add_format({'bold': True})
+        header_format = workbook.add_format({'bold': True, 'bg_color': '#D3D3D3', 'border': 1})
+        
+        # Cálculos de totales
+        total_bultos = sum(line.packages_qty for line in self.line_ids)
+        total_peso = sum(line.weight for line in self.line_ids)
         
         # --- HOJA 1: MANIFIESTO ---
         sheet_man = workbook.add_worksheet('MANIFIESTO')
+        
+        # Bloque de información superior Manifiesto
+        sheet_man.write(0, 0, 'CARGA PARA CUBANACAN', title_format)
+        sheet_man.write(1, 0, 'FECHA DESPACHO:', bold_format)
+        sheet_man.write(1, 1, self.create_date.strftime('%d-%b-%Y') if self.create_date else '')
+        sheet_man.write(2, 0, 'NRO DE VUELO:', bold_format)
+        sheet_man.write(2, 1, self.carrier.name if self.carrier else '')
+        sheet_man.write(3, 0, 'AWB:', bold_format)
+        sheet_man.write(4, 0, 'BL:', bold_format)
+        sheet_man.write(4, 1, self.name or '')
+        sheet_man.write(5, 0, 'CANT. CONTENEDOR:', bold_format)
+        sheet_man.write(6, 0, 'SELLO:', bold_format)
+        sheet_man.write(7, 0, 'TOTAL DE BULTOS:', bold_format)
+        sheet_man.write(7, 1, total_bultos)
+        sheet_man.write(8, 0, 'PESO TOTAL:', bold_format)
+        sheet_man.write(8, 1, total_peso)
+
+        # Cabeceras de Tabla Manifiesto (Fila 9)
         headers_man = [
             'NRO. HBL', 'REMITENTE', 'IDENTIFICACION DEL REMITENTE', 'DIRECCION DEL REMITENTE',
             'PROVINCIA DEL REMITENTE', 'PAIS DEL REMITENTE', 'CONSIGNATARIO',
@@ -151,45 +177,56 @@ class ShippingManagement(models.Model):
             'CANTIDAD DE BULTOS', 'DESCRIPCION DEL CONTENIDO', 'PESO EN KG'
         ]
         
+        row_man = 9
         for col, header in enumerate(headers_man):
-            sheet_man.write(0, col, header, bold_format)
-            sheet_man.set_column(col, col, 20) # Ancho de columna por defecto
+            sheet_man.write(row_man, col, header, header_format)
+            sheet_man.set_column(col, col, 20)
         
-        row = 1
+        # Datos Manifiesto
+        row_man += 1
         for line in self.line_ids:
-            sheet_man.write(row, 0, line.package_code or '')
-            sheet_man.write(row, 1, line.sender_id.name or '')
-            sheet_man.write(row, 2, line.sender_id.vat or '')
-            sheet_man.write(row, 3, line.sender_id.street or '')
-            sheet_man.write(row, 4, line.sender_id.state_id.name or '')
-            sheet_man.write(row, 5, line.sender_id.country_id.name or '')
-            sheet_man.write(row, 6, line.receiver_id.name or '')
-            sheet_man.write(row, 7, line.receiver_id.vat or '')
-            sheet_man.write(row, 8, line.receiver_id.street or '')
-            sheet_man.write(row, 9, line.receiver_id.city or '')
-            sheet_man.write(row, 10, line.receiver_id.state_id.name or '')
-            sheet_man.write(row, 11, line.receiver_id.country_id.name or '')
-            sheet_man.write(row, 12, line.packages_qty or 1)
-            sheet_man.write(row, 13, line.description or '')
-            sheet_man.write(row, 14, line.weight or 0.0)
-            row += 1
+            sheet_man.write(row_man, 0, line.package_code or '')
+            sheet_man.write(row_man, 1, line.sender_id.name or '')
+            sheet_man.write(row_man, 2, line.sender_id.vat or '')
+            sheet_man.write(row_man, 3, line.sender_id.street or '')
+            sheet_man.write(row_man, 4, line.sender_id.state_id.name or '')
+            sheet_man.write(row_man, 5, line.sender_id.country_id.name or '')
+            sheet_man.write(row_man, 6, line.receiver_id.name or '')
+            sheet_man.write(row_man, 7, line.receiver_id.vat or '')
+            sheet_man.write(row_man, 8, line.receiver_id.street or '')
+            sheet_man.write(row_man, 9, line.receiver_id.city or '')
+            sheet_man.write(row_man, 10, line.receiver_id.state_id.name or '')
+            sheet_man.write(row_man, 11, line.receiver_id.country_id.name or '')
+            sheet_man.write(row_man, 12, line.packages_qty or 1)
+            sheet_man.write(row_man, 13, line.description or '')
+            sheet_man.write(row_man, 14, line.weight or 0.0)
+            row_man += 1
 
         # --- HOJA 2: BOLETA ---
         sheet_bol = workbook.add_worksheet('BOLETA')
+        
+        # Bloque de información superior Boleta
+        sheet_bol.write(0, 0, 'DETALLE DE BOLETAS', title_format)
+        sheet_bol.write(1, 0, 'TOTAL DE BULTOS:', bold_format)
+        sheet_bol.write(1, 1, total_bultos)
+
+        # Cabeceras de Tabla Boleta (Fila 2)
         headers_bol = ['NRO. HBL', 'BOLETA', 'CONTENEDOR', 'SELLO', 'CANTIDAD DE BULTOS', 'PESO EN KG']
+        row_bol = 2
         for col, header in enumerate(headers_bol):
-            sheet_bol.write(0, col, header, bold_format)
+            sheet_bol.write(row_bol, col, header, header_format)
             sheet_bol.set_column(col, col, 20)
 
-        row = 1
+        # Datos Boleta
+        row_bol += 1
         for line in self.line_ids:
-            sheet_bol.write(row, 0, line.package_code or '')
-            sheet_bol.write(row, 1, self.name or '')
-            sheet_bol.write(row, 2, '') # Espacio para contenedor si aplica
-            sheet_bol.write(row, 3, '') # Espacio para sello si aplica
-            sheet_bol.write(row, 4, line.packages_qty or 1)
-            sheet_bol.write(row, 5, line.weight or 0.0)
-            row += 1
+            sheet_bol.write(row_bol, 0, line.package_code or '')
+            sheet_bol.write(row_bol, 1, self.name or '')
+            sheet_bol.write(row_bol, 2, '') 
+            sheet_bol.write(row_bol, 3, '') 
+            sheet_bol.write(row_bol, 4, line.packages_qty or 1)
+            sheet_bol.write(row_bol, 5, line.weight or 0.0)
+            row_bol += 1
 
         workbook.close()
         output.seek(0)
