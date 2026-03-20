@@ -43,6 +43,7 @@
                     <button name="%(modulo_gestion_envio.action_report_shipping_labels)d" string="Imprimir Etiquetas" type="action" 
                             class="btn-secondary"/>
                     <button name="action_print_bl" string="Imprimir HBL" type="object" class="oe_highlight" groups="modulo_gestion_envio.group_shipping_manager"/>
+                    <button name="action_export_manifest_excel" type="object" string="Exportar Manifiesto (Excel)" class="oe_highlight" icon="fa-file-excel-o"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirmed"/>
                 </header>
                 <sheet>

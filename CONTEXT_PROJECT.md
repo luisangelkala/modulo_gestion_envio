@@ -43,11 +43,7 @@ modulo_gestion_envio/
 - [x] **Paso 4.1: PULIDO FINAL - Reporte HBL.** (RESUELTO) Se ha corregido el layout del pie de página con tablas para evitar superposición. Se ha creado y asignado un `paperformat` con márgenes reducidos.
 - [x] **Paso 4.3: Refinamiento de Datos y Selección.** (RESUELTO) Impresión Selectiva con checkbox. Campos Relacionales convertidos a Many2one. Catálogo de Referencias implementado.
 - [x] **Paso 5: Permisos (ACL).** (RESUELTO) Creado `ir.model.access.csv` con permisos para Management, Lines, Container Types y Catálogo de Referencias.
-- [ ] **Paso 4.2: MAQUETACIÓN PIXEL-PERFECT - Etiquetas (Optimización Térmica 6x4).**
-      A. **Paperformat:** Crear/Actualizar `paperformat_shipping_label` estrictamente a `page_width="152"`, `page_height="101"`, y `orientation="Landscape"`. PROHIBIDO usar formato A4.
-      B. **Filtro:** Iterar sobre `o.line_ids.filtered(lambda l: l.print_selected) or o.line_ids`.
-      C. **Maquetación 1 por hoja:** Usar `web.html_container`. Cada etiqueta debe ocupar toda la hoja usando `<div class="page" style="page-break-after: always; overflow: hidden; height: 95mm;">`.
-      D. **Layout Rígido:** Usar una tabla horizontal estricta. Datos a la izquierda (65%), QR generado por backend a la derecha (35%).
+- [x] **Paso 4.2: MAQUETACIÓN PIXEL-PERFECT - Etiquetas (Optimización Térmica 6x4).** (RESUELTO) Se ha implementado el formato de papel 6x4 horizontal (152x101mm) y un layout de tabla para centrado vertical, eliminando hojas en blanco residuales.
 
 ## 6. REGLAS ESTRICTAS PARA CODE ASSIST
 1. **Pedir Autorización:** Propón la solución antes del código final.

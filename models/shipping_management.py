@@ -1,5 +1,8 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+import base64
+import io
+import xlsxwriter
 
 class ShippingReferenceCatalog(models.Model):
     _name = 'shipping.reference.catalog'
@@ -129,3 +132,81 @@ class ShippingManagement(models.Model):
         """ Retorna la acción para imprimir el BL, abriendo el PDF en una nueva pestaña """
         self.ensure_one()
         return self.env.ref('modulo_gestion_envio.action_report_shipping_bl').report_action(self)
+
+    def action_export_manifest_excel(self):
+        self.ensure_one()
+        
+        # Crear el archivo Excel en memoria
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        bold_format = workbook.add_format({'bold': True, 'bg_color': '#D3D3D3', 'border': 1})
+        
+        # --- HOJA 1: MANIFIESTO ---
+        sheet_man = workbook.add_worksheet('MANIFIESTO')
+        headers_man = [
+            'NRO. HBL', 'REMITENTE', 'IDENTIFICACION DEL REMITENTE', 'DIRECCION DEL REMITENTE',
+            'PROVINCIA DEL REMITENTE', 'PAIS DEL REMITENTE', 'CONSIGNATARIO',
+            'IDENTIFICACION DEL CONSIGNATARIO', 'DIRECCION DEL CONSIGNATARIO',
+            'MUNICIPIO DEL CONSIGNATARIO', 'PROVINCIA DEL CONSIGNATARIO', 'PAIS CONSIGNATARIO',
+            'CANTIDAD DE BULTOS', 'DESCRIPCION DEL CONTENIDO', 'PESO EN KG'
+        ]
+        
+        for col, header in enumerate(headers_man):
+            sheet_man.write(0, col, header, bold_format)
+            sheet_man.set_column(col, col, 20) # Ancho de columna por defecto
+        
+        row = 1
+        for line in self.line_ids:
+            sheet_man.write(row, 0, line.package_code or '')
+            sheet_man.write(row, 1, line.sender_id.name or '')
+            sheet_man.write(row, 2, line.sender_id.vat or '')
+            sheet_man.write(row, 3, line.sender_id.street or '')
+            sheet_man.write(row, 4, line.sender_id.state_id.name or '')
+            sheet_man.write(row, 5, line.sender_id.country_id.name or '')
+            sheet_man.write(row, 6, line.receiver_id.name or '')
+            sheet_man.write(row, 7, line.receiver_id.vat or '')
+            sheet_man.write(row, 8, line.receiver_id.street or '')
+            sheet_man.write(row, 9, line.receiver_id.city or '')
+            sheet_man.write(row, 10, line.receiver_id.state_id.name or '')
+            sheet_man.write(row, 11, line.receiver_id.country_id.name or '')
+            sheet_man.write(row, 12, line.packages_qty or 1)
+            sheet_man.write(row, 13, line.description or '')
+            sheet_man.write(row, 14, line.weight or 0.0)
+            row += 1
+
+        # --- HOJA 2: BOLETA ---
+        sheet_bol = workbook.add_worksheet('BOLETA')
+        headers_bol = ['NRO. HBL', 'BOLETA', 'CONTENEDOR', 'SELLO', 'CANTIDAD DE BULTOS', 'PESO EN KG']
+        for col, header in enumerate(headers_bol):
+            sheet_bol.write(0, col, header, bold_format)
+            sheet_bol.set_column(col, col, 20)
+
+        row = 1
+        for line in self.line_ids:
+            sheet_bol.write(row, 0, line.package_code or '')
+            sheet_bol.write(row, 1, self.name or '')
+            sheet_bol.write(row, 2, '') # Espacio para contenedor si aplica
+            sheet_bol.write(row, 3, '') # Espacio para sello si aplica
+            sheet_bol.write(row, 4, line.packages_qty or 1)
+            sheet_bol.write(row, 5, line.weight or 0.0)
+            row += 1
+
+        workbook.close()
+        output.seek(0)
+        
+        # Guardar como adjunto y retornar acción de descarga
+        excel_file = base64.b64encode(output.read())
+        attachment = self.env['ir.attachment'].create({
+            'name': f'Manifiesto_{self.name}.xlsx',
+            'type': 'binary',
+            'datas': excel_file,
+            'res_model': 'shipping.management',
+            'res_id': self.id,
+            'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        })
+        
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/{attachment.id}?download=true',
+            'target': 'self',
+        }
