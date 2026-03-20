@@ -141,83 +141,108 @@ class ShippingManagement(models.Model):
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
         
         # Formatos
-        title_format = workbook.add_format({'bold': True, 'font_size': 14})
         bold_format = workbook.add_format({'bold': True})
-        header_format = workbook.add_format({'bold': True, 'bg_color': '#D3D3D3', 'border': 1})
+        header_format = workbook.add_format({'bold': True, 'bg_color': '#D3D3D3', 'border': 1, 'text_wrap': True, 'valign': 'vcenter'})
         
         # Cálculos de totales
+        total_envios = len(self.line_ids)
         total_bultos = sum(line.packages_qty for line in self.line_ids)
         total_peso = sum(line.weight for line in self.line_ids)
+        fecha_str = self.create_date.strftime('%d/%m/%Y') if self.create_date else ''
         
         # --- HOJA 1: MANIFIESTO ---
         sheet_man = workbook.add_worksheet('MANIFIESTO')
         
-        # Bloque de información superior Manifiesto
-        sheet_man.write(0, 0, 'CARGA PARA CUBANACAN', title_format)
-        sheet_man.write(1, 0, 'FECHA DESPACHO:', bold_format)
-        sheet_man.write(1, 1, self.create_date.strftime('%d-%b-%Y') if self.create_date else '')
-        sheet_man.write(2, 0, 'NRO DE VUELO:', bold_format)
-        sheet_man.write(2, 1, self.carrier.name if self.carrier else '')
-        sheet_man.write(3, 0, 'AWB:', bold_format)
-        sheet_man.write(4, 0, 'BL:', bold_format)
-        sheet_man.write(4, 1, self.name or '')
-        sheet_man.write(5, 0, 'CANT. CONTENEDOR:', bold_format)
-        sheet_man.write(6, 0, 'SELLO:', bold_format)
-        sheet_man.write(7, 0, 'TOTAL DE BULTOS:', bold_format)
-        sheet_man.write(7, 1, total_bultos)
-        sheet_man.write(8, 0, 'PESO TOTAL:', bold_format)
-        sheet_man.write(8, 1, total_peso)
+        # 1. Bloque de información superior (Filas 0 a 8)
+        sheet_man.write(0, 0, 'AGENCIA ORIGEN', bold_format)
+        sheet_man.write(0, 1, 'ORDAZ')
+        
+        sheet_man.write(1, 0, 'PAÍS', bold_format)
+        sheet_man.write(1, 1, 'PANAMÁ')
+        
+        sheet_man.write(2, 0, 'CONSIGNATARIO', bold_format)
+        sheet_man.write(2, 1, 'Cubanacan Express S.A')
+        
+        sheet_man.write(3, 0, 'MBL/AWB', bold_format)
+        sheet_man.write(3, 1, self.name or '')
+        
+        sheet_man.write(4, 0, 'CONTENEDOR', bold_format)
+        sheet_man.write(4, 1, '') # Dejar en blanco para llenar manual o mapear en el futuro
+        
+        sheet_man.write(5, 0, 'TOTAL ENVÍOS', bold_format)
+        sheet_man.write(5, 1, total_envios)
+        
+        sheet_man.write(6, 0, 'TOTAL DE BULTOS', bold_format)
+        sheet_man.write(6, 1, total_bultos)
+        
+        sheet_man.write(7, 0, 'TOTAL PESO (Kg)', bold_format)
+        sheet_man.write(7, 1, total_peso)
+        
+        sheet_man.write(8, 0, 'FECHA', bold_format)
+        sheet_man.write(8, 1, fecha_str)
 
-        # Cabeceras de Tabla Manifiesto (Fila 9)
+        # 2. Cabeceras de Tabla Manifiesto (Fila 10)
         headers_man = [
-            'NRO. HBL', 'REMITENTE', 'IDENTIFICACION DEL REMITENTE', 'DIRECCION DEL REMITENTE',
-            'PROVINCIA DEL REMITENTE', 'PAIS DEL REMITENTE', 'CONSIGNATARIO',
-            'IDENTIFICACION DEL CONSIGNATARIO', 'DIRECCION DEL CONSIGNATARIO',
-            'MUNICIPIO DEL CONSIGNATARIO', 'PROVINCIA DEL CONSIGNATARIO', 'PAIS CONSIGNATARIO',
-            'CANTIDAD DE BULTOS', 'DESCRIPCION DEL CONTENIDO', 'PESO EN KG'
+            'No. ENVÍO (HBL)', 'REMITENTE', 'DIRECCIÓN REMITENTE', 'DNI/PASAPORTE REMITENTE',
+            'DESTINATARIO', 'DIRECCIÓN DESTINATARIO', 'MUNICIPIO', 'PROVINCIA', 
+            'CARNÉ IDENTIDAD', 'TELÉFONO FIJO', 'TELÉFONO MÓVIL', 'BULTOS', 
+            'PESO (Kg)', 'MERCANCIA', 'OBSERVACIONES'
         ]
         
-        row_man = 9
+        row_man = 10
         for col, header in enumerate(headers_man):
             sheet_man.write(row_man, col, header, header_format)
-            sheet_man.set_column(col, col, 20)
+            # Ajustar anchos de columna para mejor lectura
+            if col in [2, 5, 13]: # Direcciones y Mercancia
+                sheet_man.set_column(col, col, 35)
+            elif col in [1, 4]: # Nombres
+                sheet_man.set_column(col, col, 25)
+            else:
+                sheet_man.set_column(col, col, 15)
         
-        # Datos Manifiesto
+        # 3. Datos de la Tabla Manifiesto
         row_man += 1
         for line in self.line_ids:
             sheet_man.write(row_man, 0, line.package_code or '')
             sheet_man.write(row_man, 1, line.sender_id.name or '')
-            sheet_man.write(row_man, 2, line.sender_id.vat or '')
-            sheet_man.write(row_man, 3, line.sender_id.street or '')
-            sheet_man.write(row_man, 4, line.sender_id.state_id.name or '')
-            sheet_man.write(row_man, 5, line.sender_id.country_id.name or '')
-            sheet_man.write(row_man, 6, line.receiver_id.name or '')
-            sheet_man.write(row_man, 7, line.receiver_id.vat or '')
-            sheet_man.write(row_man, 8, line.receiver_id.street or '')
-            sheet_man.write(row_man, 9, line.receiver_id.city or '')
-            sheet_man.write(row_man, 10, line.receiver_id.state_id.name or '')
-            sheet_man.write(row_man, 11, line.receiver_id.country_id.name or '')
-            sheet_man.write(row_man, 12, line.packages_qty or 1)
+            
+            # Dirección Remitente (Concatenada)
+            sender_address = f"{line.sender_id.street or ''} {line.sender_id.street2 or ''}".strip()
+            sheet_man.write(row_man, 2, sender_address)
+            
+            sheet_man.write(row_man, 3, line.sender_id.vat or '')
+            sheet_man.write(row_man, 4, line.receiver_id.name or '')
+            
+            # Dirección Destinatario (Concatenada)
+            receiver_address = f"{line.receiver_id.street or ''} {line.receiver_id.street2 or ''}".strip()
+            sheet_man.write(row_man, 5, receiver_address)
+            
+            sheet_man.write(row_man, 6, line.receiver_id.city or '')
+            sheet_man.write(row_man, 7, line.receiver_id.state_id.name or '')
+            sheet_man.write(row_man, 8, line.receiver_id.vat or '')
+            
+            # Teléfonos (Si solo hay uno en Odoo, lo ponemos en móvil y dejamos fijo vacío)
+            sheet_man.write(row_man, 9, '') # Teléfono Fijo (Dejar vacío o mapear si tienes el campo)
+            sheet_man.write(row_man, 10, line.receiver_id.phone or '') # Teléfono Móvil
+            
+            sheet_man.write(row_man, 11, line.packages_qty or 1)
+            sheet_man.write(row_man, 12, line.weight or 0.0)
             sheet_man.write(row_man, 13, line.description or '')
-            sheet_man.write(row_man, 14, line.weight or 0.0)
+            sheet_man.write(row_man, 14, '') # Observaciones
             row_man += 1
 
-        # --- HOJA 2: BOLETA ---
+        # --- HOJA 2: BOLETA (Se mantiene básica por ahora) ---
         sheet_bol = workbook.add_worksheet('BOLETA')
-        
-        # Bloque de información superior Boleta
-        sheet_bol.write(0, 0, 'DETALLE DE BOLETAS', title_format)
+        sheet_bol.write(0, 0, 'DETALLE DE BOLETAS', bold_format)
         sheet_bol.write(1, 0, 'TOTAL DE BULTOS:', bold_format)
         sheet_bol.write(1, 1, total_bultos)
 
-        # Cabeceras de Tabla Boleta (Fila 2)
         headers_bol = ['NRO. HBL', 'BOLETA', 'CONTENEDOR', 'SELLO', 'CANTIDAD DE BULTOS', 'PESO EN KG']
-        row_bol = 2
+        row_bol = 3
         for col, header in enumerate(headers_bol):
             sheet_bol.write(row_bol, col, header, header_format)
             sheet_bol.set_column(col, col, 20)
 
-        # Datos Boleta
         row_bol += 1
         for line in self.line_ids:
             sheet_bol.write(row_bol, 0, line.package_code or '')
