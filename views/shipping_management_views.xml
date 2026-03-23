@@ -88,9 +88,13 @@
                     </group>
                     <notebook>
                         <page string="Líneas de Carga" name="lines">
-                            <field name="line_ids" readonly="state == 'confirmed'">
+                            <field name="line_search" placeholder="🔍 Escriba para filtrar por Código, Remitente o Destinatario..." class="mb-2"/>
+                            <field name="line_ids_display" widget="one2many" context="{'default_shipping_id': id}" readonly="state == 'confirmed'">
                                 <!-- Vista de Lista (resumen) -->
                                 <tree>
+                                    <control>
+                                        <create name="add_line_control" string="Agregar nuevo envío"/>
+                                    </control>
                                     <field name="print_selected" widget="boolean_toggle" string="Imp."/>
                                     <field name="package_code"/>
                                     <field name="sender_id"/>

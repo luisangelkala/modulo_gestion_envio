@@ -44,6 +44,7 @@ modulo_gestion_envio/
 - [x] **Paso 4.3: Refinamiento de Datos y Selección.** (RESUELTO) Impresión Selectiva con checkbox. Campos Relacionales convertidos a Many2one. Catálogo de Referencias implementado.
 - [x] **Paso 5: Permisos (ACL).** (RESUELTO) Creado `ir.model.access.csv` con permisos para Management, Lines, Container Types y Catálogo de Referencias.
 - [x] **Paso 4.2: MAQUETACIÓN PIXEL-PERFECT - Etiquetas (Optimización Térmica 6x4).** (RESUELTO) Se ha implementado el formato de papel 6x4 horizontal (152x101mm) y un layout de tabla para centrado vertical, eliminando hojas en blanco residuales.
+- [x] **Paso 4.3 (Extra): Usabilidad de Líneas.** (RESUELTO) Implementado filtro en tiempo real para buscar líneas y renombrado botón de creación a "Agregar nuevo envío".
 
 ## 6. REGLAS ESTRICTAS PARA CODE ASSIST
 1. **Pedir Autorización:** Propón la solución antes del código final.
