@@ -31,50 +31,6 @@
         <field name="context">{'default_transport_type': 'sea'}</field>
     </record>
 
-    <!-- VISTA Y ACCIÓN PARA BÚSQUEDA DE LÍNEAS (POPUP / VENTANA) -->
-    <record id="view_shipping_line_search" model="ir.ui.view">
-        <field name="name">shipping.management.line.search</field>
-        <field name="model">shipping.management.line</field>
-        <field name="arch" type="xml">
-            <search string="Buscar Líneas">
-                <field name="package_code"/>
-                <field name="sender_id"/>
-                <field name="receiver_id"/>
-                <field name="description"/>
-                <group expand="0" string="Agrupar Por">
-                    <filter string="Remitente" name="group_sender" context="{'group_by': 'sender_id'}"/>
-                    <filter string="Destinatario" name="group_receiver" context="{'group_by': 'receiver_id'}"/>
-                </group>
-            </search>
-        </field>
-    </record>
-
-    <record id="view_shipping_line_tree_standalone" model="ir.ui.view">
-        <field name="name">shipping.management.line.tree.standalone</field>
-        <field name="model">shipping.management.line</field>
-        <field name="arch" type="xml">
-            <tree string="Líneas de Carga" editable="bottom">
-                <field name="print_selected" widget="boolean_toggle" string="Imp."/>
-                <field name="package_code" readonly="1"/>
-                <field name="sender_id"/>
-                <field name="receiver_id"/>
-                <field name="packages_qty" sum="Total Bultos"/>
-                <field name="weight" sum="Total Peso"/>
-            </tree>
-        </field>
-    </record>
-
-    <record id="action_open_shipping_lines" model="ir.actions.act_window">
-        <field name="name">Búsqueda de Envíos</field>
-        <field name="res_model">shipping.management.line</field>
-        <field name="view_mode">tree</field>
-        <field name="view_id" ref="view_shipping_line_tree_standalone"/>
-        <field name="search_view_id" ref="view_shipping_line_search"/>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">Utilice la barra de búsqueda para filtrar las líneas.</p>
-        </field>
-    </record>
-
     <record id="view_shipping_management_form" model="ir.ui.view">
         <field name="name">shipping.management.form</field>
         <field name="model">shipping.management</field>
@@ -132,19 +88,9 @@
                     </group>
                     <notebook>
                         <page string="Líneas de Carga" name="lines">
-                            <div class="text-end mb-2" invisible="not line_ids">
-                                <button name="%(modulo_gestion_envio.action_open_shipping_lines)d" 
-                                        string="🔍 Búsqueda Avanzada / Filtrar" 
-                                        type="action" 
-                                        class="btn btn-link" 
-                                        context="{'search_default_shipping_id': id, 'default_shipping_id': id}"/>
-                            </div>
                             <field name="line_ids" readonly="state == 'confirmed'">
                                 <!-- Vista de Lista (resumen) -->
                                 <tree>
-                                    <control>
-                                        <create name="add_line_control" string="Agregar nuevo envío"/>
-                                    </control>
                                     <field name="print_selected" widget="boolean_toggle" string="Imp."/>
                                     <field name="package_code"/>
                                     <field name="sender_id"/>

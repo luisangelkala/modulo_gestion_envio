@@ -62,6 +62,29 @@ class ShippingManagement(models.Model):
 
     line_ids = fields.One2many('shipping.management.line', 'shipping_id', string='Líneas de Envío')
 
+    # --- Lógica de Filtrado en Pantalla ---
+    line_search = fields.Char(string='Buscar en líneas', store=False) # Campo temporal para escribir
+    line_ids_display = fields.Many2many('shipping.management.line', string='Líneas Visibles', 
+                                        compute='_compute_line_ids_display', inverse='_inverse_dummy')
+
+    @api.depends('line_ids', 'line_search')
+    def _compute_line_ids_display(self):
+        for rec in self:
+            if rec.line_search:
+                s = rec.line_search.lower()
+                # Filtra si el texto coincide con Código, Remitente o Destinatario
+                rec.line_ids_display = rec.line_ids.filtered(lambda l: 
+                    (l.package_code and s in l.package_code.lower()) or
+                    (l.sender_id.name and s in l.sender_id.name.lower()) or
+                    (l.receiver_id.name and s in l.receiver_id.name.lower())
+                )
+            else:
+                rec.line_ids_display = rec.line_ids
+
+    def _inverse_dummy(self):
+        # Necesario para que el campo computed sea editable y permita agregar líneas
+        pass
+
     # Smart Stats (Computados)
     total_packages = fields.Integer(string='Total Bultos', compute='_compute_smart_stats', store=True)
     total_weight = fields.Float(string='Peso Total (Kg)', compute='_compute_smart_stats', store=True)
