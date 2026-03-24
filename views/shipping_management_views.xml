@@ -112,7 +112,7 @@
                                         <group>
                                             <field name="print_selected" widget="boolean_toggle"/>
                                             <group string="Contactos">
-                                                <field name="customer_id" options="{'no_create': True, 'no_open': True}"/>
+                                                <field name="customer_id" options="{'no_open': True}"/>
                                                 <field name="sender_id" required="1"/>
                                                 <field name="receiver_id" required="1"/>
                                                 <field name="shipping_type"/>
