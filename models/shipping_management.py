@@ -72,9 +72,10 @@ class ShippingManagement(models.Model):
         for rec in self:
             if rec.line_search:
                 s = rec.line_search.lower()
-                # Filtra si el texto coincide con Código, Remitente o Destinatario
+                # Filtra si el texto coincide con Código, Cliente, Remitente o Destinatario
                 rec.line_ids_display = rec.line_ids.filtered(lambda l: 
                     (l.package_code and s in l.package_code.lower()) or
+                    (l.customer_id.name and s in l.customer_id.name.lower()) or
                     (l.sender_id.name and s in l.sender_id.name.lower()) or
                     (l.receiver_id.name and s in l.receiver_id.name.lower())
                 )

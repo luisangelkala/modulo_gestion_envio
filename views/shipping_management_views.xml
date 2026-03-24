@@ -88,7 +88,7 @@
                     </group>
                     <notebook>
                         <page string="Líneas de Carga" name="lines">
-                            <field name="line_search" placeholder="🔍 Escriba para filtrar por Código, Remitente o Destinatario..." class="mb-2"/>
+                            <field name="line_search" placeholder="🔍 Escriba para filtrar por Código, Cliente, Remitente o Destinatario..." class="mb-2"/>
                             <field name="line_ids_display" widget="one2many" context="{'default_shipping_id': id}" readonly="state == 'confirmed'">
                                 <!-- Vista de Lista (resumen) -->
                                 <tree>
