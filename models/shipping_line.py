@@ -23,8 +23,8 @@ class ShippingManagementLine(models.Model):
         ('ena', 'ENA')
     ], string='Tipo de Envío', required=True, default='envio')
 
-    # Código de bulto con valor temporal. Se asigna al confirmar el envío.
-    package_code = fields.Char(string='Código Paquete', default=lambda self: self.env['ir.sequence'].next_by_code('shipping.management'), readonly=True, copy=False)
+    # El código se inicializa como 'NUEVO' y se genera formalmente al confirmar el envío (shipping.management)
+    package_code = fields.Char(string='Código Paquete', default='NUEVO', readonly=True, copy=False)
     
     # QR Code generado en backend para alta calidad en PDF
     qr_image = fields.Binary(string="QR Code", compute="_compute_qr_image")
@@ -73,3 +73,77 @@ class ShippingManagementLine(models.Model):
             'shipping_id': self.shipping_id.id,
             # El package_code se reseteará a su default 'Borrador' al no ser copiado (copy=False).
         })
+
+    # --- Lógica de Fraccionamiento Dinámico ENA ---
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        lines = super().create(vals_list)
+        for line in lines:
+            if line.shipping_type == 'ena' and line.customer_id:
+                line._recompute_ena_package_codes(line.shipping_id.id, line.customer_id.id)
+        return lines
+
+    def write(self, vals):
+        # Identificar grupos afectados antes de la modificación (por si cambian de cliente o tipo)
+        affected_groups = []
+        if any(k in vals for k in ['customer_id', 'shipping_id', 'shipping_type']):
+            for line in self:
+                if line.shipping_type == 'ena' and line.customer_id:
+                    affected_groups.append((line.shipping_id.id, line.customer_id.id))
+
+        res = super().write(vals)
+
+        # 1. Recomputar grupos originales (por si quedaron bultos que deben bajar el denominador Y)
+        for ship_id, cust_id in set(affected_groups):
+            self._recompute_ena_package_codes(ship_id, cust_id)
+
+        # 2. Recomputar grupos nuevos
+        if any(k in vals for k in ['customer_id', 'shipping_id', 'shipping_type']):
+            for line in self:
+                if line.shipping_type == 'ena' and line.customer_id:
+                    line._recompute_ena_package_codes(line.shipping_id.id, line.customer_id.id)
+                elif 'shipping_type' in vals and vals['shipping_type'] != 'ena':
+                    # Si deja de ser ENA, vuelve a estado NUEVO para ser procesado por la secuencia normal
+                    super(ShippingManagementLine, line).write({'package_code': 'NUEVO'})
+        return res
+
+    def unlink(self):
+        # Capturar grupos antes de borrar
+        groups_to_recompute = []
+        for line in self:
+            if line.shipping_type == 'ena' and line.customer_id:
+                groups_to_recompute.append((line.shipping_id.id, line.customer_id.id))
+        
+        res = super().unlink()
+
+        # Recomputar después de borrar para actualizar el conteo X/Y de los que quedan
+        for ship_id, cust_id in set(groups_to_recompute):
+            self._recompute_ena_package_codes(ship_id, cust_id)
+        return res
+
+    def _recompute_ena_package_codes(self, shipping_id_id, customer_id_id):
+        """ Método privado para el cálculo dinámico de bultos ENA """
+        if not shipping_id_id or not customer_id_id:
+            return
+
+        # Buscar todas las líneas ENA del mismo titular en este manifiesto
+        lines = self.env['shipping.management.line'].search([
+            ('shipping_id', '=', shipping_id_id),
+            ('customer_id', '=', customer_id_id),
+            ('shipping_type', '=', 'ena')
+        ], order='id asc')
+
+        if not lines:
+            return
+
+        # Intentar recuperar un código base ya asignado al grupo o generar uno nuevo
+        base_code = next((l.package_code.split(' BULTO ')[0] for l in lines if l.package_code and l.package_code != 'NUEVO'), False)
+        if not base_code:
+            base_code = self.env['ir.sequence'].next_by_code('shipping.management')
+
+        total = len(lines)
+        for index, line in enumerate(lines, start=1):
+            new_code = f"{base_code} BULTO {index}/{total}"
+            if line.package_code != new_code:
+                super(ShippingManagementLine, line).write({'package_code': new_code})

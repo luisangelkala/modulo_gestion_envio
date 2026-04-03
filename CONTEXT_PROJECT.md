@@ -1,55 +1,69 @@
-# Contexto del Proyecto: Odoo 17 Community - Módulo Gestión de Envío
+# Contexto del Proyecto: Módulo de Gestión de Envíos (Odoo 17)
 
-## 1. Visión General
-Desarrollo de un módulo personalizado para Odoo 17 Community que gestione la logística de envíos internacionales. El sistema automatiza validaciones de carga, generación de etiquetas y control de acceso.
+## 1. Definición del Proyecto
+Creación de un módulo personalizado en Odoo (`modulo_gestion_envio`) para gestionar envíos de carga marítima y aérea hacia Cuba (específicamente para la agencia Ordaz y la transitaria Cubanacan). El módulo debe manejar agrupaciones de bultos (HBL/Guías), generar reportes PDF muy específicos y exportar manifiestos en Excel.
 
-## 2. Pila Tecnológica y Estándares
-- **Framework:** Odoo 17.0 Community Edition.
-- **Frontend:** XML estricto. NO usar `<data>` en las vistas.
-- **Reportes:** QWeb Reports. Los reportes deben abrirse nativamente. **Importante:** El motor wkhtmltopdf de Odoo tiene fallos con CSS moderno (flexbox); usar siempre estructuras `<table>` clásicas para el layout.
+## 2. Estructura de Datos (Modelos)
+El sistema se basa en una relación Maestro-Detalle (Cabecera-Líneas):
 
-## 3. Mapa Real del Módulo
-modulo_gestion_envio/
-├── __manifest__.py                 # (RESUELTO)
-├── CONTEXT_PROJECT.md              # Este archivo
-├── ERROR.md                        # Bitácora estricta de errores
-├── models/
-│   ├── container_type.py           # (RESUELTO)
-│   ├── shipping_management.py      # (RESUELTO)
-│   └── shipping_line.py            # (RESUELTO)
-├── security/
-│   ├── groups.xml                  # (RESUELTO)
-│   └── ir.model.access.csv         # (RESUELTO)
-├── data/
-│   ├── sequence.xml                # (RESUELTO)
-│   └── container_data.xml          # (RESUELTO)
-├── views/
-│   ├── menus.xml                   # (RESUELTO)
-│   ├── container_type_views.xml    # (RESUELTO)
-│   └── shipping_management_views.xml # (RESUELTO)
-└── report/
-    └── shipping_reports.xml        # (EN DESARROLLO - Etiquetas)
+* **Maestro (`shipping.management`) - El Manifiesto/HBL:**
+    * Contiene la información general del despacho (AWB, Carrier, Totales).
+    * Gestiona el estado del envío.
+* **Detalle (`shipping.line`) - Los Bultos Individuales:**
+    * Representa cada paquete dentro del HBL.
+    * **Cliente (`customer_id`)**: Relación con `res.partner` (quien contrata/paga el envío).
+    * **Remitente (`sender_id`) / Consignatario (`receiver_id`)**: Relaciones con `res.partner`.
+    * **Código de Paquete (`package_code`)**: 
+        * Envíos Normales: Código de barras único (ej. 246-11-00011).
+        * Envíos ENA: Código compartido por `customer_id` con sufijo fraccionado dinámico (ej. 246-11-00025 BULTO 1/3).
+    * **QR (`qr_image`)**: Imagen codificada en base64 generada desde el backend de Odoo.
+    * **Atributos físicos**: Peso, Volumen, Cantidad, Tipo de Envío, Descripción.
 
-## 4. Requisitos y Reglas de Negocio Clave
-1. **Seguridad de Roles:** Admin (Confirmar) y Tráfico (Líneas).
-2. **Generación de Código:** Secuencia asignada inmediatamente al crear la línea (admite saltos de secuencia).
-3. **Reportes (CRÍTICO):** El HBL genera 3 copias idénticas por bulto e imprime 2 copias por hoja A4. Las Etiquetas deben imprimir **3 copias diferentes por hoja A4** aprovechando el espacio al máximo.
-4. **Selección de Impresión:** Ambos reportes (HBL y Etiquetas) deben filtrar e imprimir solo las líneas seleccionadas con el checkbox, o todas si ninguna está marcada.
-5. **Mapeo de Entidades:** 'Agencia de Origen' y 'Naviera/Aerolínea' deben ser contactos (`res.partner`), no texto simple.
-6. **Catálogo de Referencias:** Mantenimiento de identificadores (Guías Aéreas / Manifiestos) en Configuración para estandarizar el campo Referencia.
+## 3. Vistas y Flujo de Trabajo
+* Interfaz limpia e intuitiva en el backend de Odoo.
+* **Popup de captura rápida:** Las líneas de bultos se introducen a través de un popup (Form) optimizado para rapidez, donde se selecciona el Cliente, Remitente, Consignatario y los detalles físicos.
+* **Botones de Acción:** Ubicados en el `<header>` del formulario principal para desencadenar impresiones PDF, exportaciones a Excel y cambios de estado.
 
-## 5. Hoja de Ruta y Objetivos Pendientes
-- [x] **Paso 1, 2 y 3: Interfaz, Ajuste Estructural y Seguridad.** (RESUELTO)
-- [x] **Paso 4.1: PULIDO FINAL - Reporte HBL.** (RESUELTO) Se ha corregido el layout del pie de página con tablas para evitar superposición. Se ha creado y asignado un `paperformat` con márgenes reducidos.
-- [x] **Paso 4.3: Refinamiento de Datos y Selección.** (RESUELTO) Impresión Selectiva con checkbox. Campos Relacionales convertidos a Many2one. Catálogo de Referencias implementado.
-- [x] **Paso 5: Permisos (ACL).** (RESUELTO) Creado `ir.model.access.csv` con permisos para Management, Lines, Container Types y Catálogo de Referencias.
-- [x] **Paso 4.2: MAQUETACIÓN PIXEL-PERFECT - Etiquetas (Optimización Térmica 6x4).** (RESUELTO) Se ha implementado el formato de papel 6x4 horizontal (152x101mm) y un layout de tabla para centrado vertical, eliminando hojas en blanco residuales.
-- [x] **Paso 4.3 (Extra): Usabilidad de Líneas.** (RESUELTO) Implementado filtro en tiempo real para buscar líneas y renombrado botón de creación a "Agregar nuevo envío".
+## 4. Reportes y Documentos (El Core Crítico)
+La precisión en los documentos es el núcleo del proyecto. Reglas inquebrantables:
+* **HBL (House Bill of Lading):**
+    * Formato A4 estricto, 3 copias idénticas por bulto en la misma hoja.
+    * Requiere `meta charset="utf-8"` y uso de `t-esc` para evitar caracteres corruptos (wkhtmltopdf bug).
+* **Etiquetas Térmicas (Shipping Labels):**
+    * **⚠️ REGLA DE ORO:** Formato 6x4 pulgadas **HORIZONTAL** (Landscape, 152x101mm).
+    * Maquetación de 2 columnas (Datos 65% / QR 35%) usando `<table>` tradicional para garantizar centrado vertical (`vertical-align: middle`).
+    * Uso de `page-break-after: always;` puro para evitar hojas en blanco. Prohibido volver a formato A4 o Portrait.
+* **Manifiesto Excel (.xlsx):**
+    * Exportación nativa usando `xlsxwriter` directamente desde el backend de Odoo (sin librerías de terceros inestables).
+    * Genera dos hojas: "MANIFIESTO" y "BOLETA", respetando exactamente las cabeceras, totales matemáticos y mapeo de columnas del formato estándar de Ordaz.
 
-## 6. REGLAS ESTRICTAS PARA CODE ASSIST
-1. **Pedir Autorización:** Propón la solución antes del código final.
-2. **Prohibición de Sobrescritura:** NO alterar funcionalidades que ya están correctas.
-3. **Respetar la Bitácora:** Revisa `ERROR.md` siempre.
-4. **Aislamiento de Cambios:** Entrega solo las porciones de código a modificar.
-5. **Actualización del Contexto:** Al finalizar un paso, proveer el texto actualizado.
-6. **REGLA DE ORO ACTUAL:** BAJO NINGUNA CIRCUNSTANCIA se debe modificar, reescribir, alterar o incluir el código de la acción ni del template del HBL (`report_shipping_hbl` y `action_report_shipping_bl`).
+## 5. Hoja de Ruta (Checklist de Progreso)
+
+- [x] **Paso 1:** Configuración base del módulo e instalación en entorno de pruebas (Odoo.sh/VPS).
+- [x] **Paso 2.1:** Creación del modelo principal `shipping.management` y vistas básicas.
+- [x] **Paso 2.2:** Creación del modelo `shipping.line`, incluyendo generación de QR en backend y nuevo campo estructural de `customer_id` (Cliente).
+- [x] **Paso 3:** Lógica de negocio, botones de estado y filtros de impresión selectiva (`print_selected`).
+- [x] **Paso 4.1: MAQUETACIÓN PIXEL-PERFECT - HBL.**
+      - Diseño estricto de 3 copias.
+      - Corrección de codificación UTF-8.
+      - Inserción de Logo hardcodeado/compañía.
+- [x] **Paso 4.2: MAQUETACIÓN PIXEL-PERFECT - Etiquetas (Optimización Térmica 6x4).**
+      - `paperformat` estricto a `page_width="152"`, `page_height="101"`, `orientation="Landscape"`.
+      - Diseño Horizontal 2 columnas.
+      - Paginación corregida sin hojas en blanco (`page-break-after: always`).
+- [x] **Paso 4.3: EXPORTACIÓN EXCEL NATIVA.**
+      - Creación de método `action_export_manifest_excel`.
+      - Mapeo exacto de 15 columnas del Manifiesto y 6 de la Boleta con cálculos de totales.
+- [x] **Paso 4.4: LÓGICA ENA DINÁMICA.**
+      - Implementación de hooks CRUD (`create`, `write`, `unlink`) en líneas.
+      - Agrupación por `customer_id` (Titular).
+      - Generación automática de secuencia base y recálculo de denominadores (X/Y) en tiempo real.
+- [ ] **Paso 5:** Pruebas integrales de flujo completo (Creación -> Impresión -> Exportación -> Cierre).
+- [ ] **Paso 6:** Despliegue en Producción.
+
+## 6. Reglas de Interacción con Asistentes AI
+* Leer SIEMPRE este documento antes de proponer cambios de código.
+* NO modificar formatos de papel (`paperformat`) validados.
+* NO usar `display: flex` para PDFs de Odoo. Usar `<table>` HTML.
+* Mantener el código modular y aislado (no romper lo que ya funciona).
+* Los códigos ENA deben recalcularse siempre que cambie el Cliente, el Tipo de Envío o se eliminen bultos del grupo.

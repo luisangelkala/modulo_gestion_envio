@@ -111,10 +111,32 @@ class ShippingManagement(models.Model):
 
     def action_confirm(self):
         self.ensure_one()
+        # BLOQUEO TEMPORAL: Retornar sin ejecutar lógica
+        return True
+
         # Validaciones de Reglas de Negocio
         self._check_capacity_rules()
-
+        # Asignación de códigos de bulto según reglas (ENA vs Normal)
+        self._assign_package_codes()
         self.write({'state': 'confirmed'})
+
+    def _assign_package_codes(self):
+        """
+        Asigna los códigos de bulto finales.
+        - Normales: Asigna secuencia única si no tiene.
+        - ENA: Ejecuta re-cálculo de seguridad para asegurar integridad de la fracción.
+        """
+        for rec in self:
+            # Procesar envíos normales
+            normal_lines = rec.line_ids.filtered(lambda l: l.shipping_type != 'ena')
+            for line in normal_lines:
+                if not line.package_code or line.package_code == 'NUEVO':
+                    line.package_code = self.env['ir.sequence'].next_by_code('shipping.management')
+
+            # Asegurar integridad de grupos ENA al confirmar
+            ena_customers = rec.line_ids.filtered(lambda l: l.shipping_type == 'ena').mapped('customer_id')
+            for customer in ena_customers:
+                rec.line_ids._recompute_ena_package_codes(rec.id, customer.id)
 
     def _check_capacity_rules(self):
         """ Valida las reglas de negocio antes de confirmar """
@@ -155,11 +177,13 @@ class ShippingManagement(models.Model):
     def action_print_bl(self):
         """ Retorna la acción para imprimir el BL, abriendo el PDF en una nueva pestaña """
         self.ensure_one()
+        return True # BLOQUEO TEMPORAL
         return self.env.ref('modulo_gestion_envio.action_report_shipping_bl').report_action(self)
 
     def action_export_manifest_excel(self):
         self.ensure_one()
-        
+        return True # BLOQUEO TEMPORAL
+
         # Crear el archivo Excel en memoria
         output = io.BytesIO()
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
