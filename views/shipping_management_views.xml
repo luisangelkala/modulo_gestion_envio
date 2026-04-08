@@ -38,7 +38,7 @@
             <form string="Gestión de Envío">
                 <header>
                     <!-- Botones en modo "Solo Lectura" (Sin name ni type) -->
-                    <button string="Confirmar" class="btn-secondary" 
+                    <button string="Confirmar" name="action_confirm" type="object" class="oe_highlight" 
                             invisible="state != 'draft'" groups="modulo_gestion_envio.group_shipping_manager"
                             confirm="¿Está seguro que desea confirmar este envío? Esta acción es irreversible."/>
                     
