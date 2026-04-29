@@ -44,9 +44,9 @@
                     
                     <button string="Imprimir Etiquetas" name="%(modulo_gestion_envio.action_report_shipping_labels)d" type="action" class="btn-secondary"/>
                     
-                    <button string="Imprimir HBL" groups="modulo_gestion_envio.group_shipping_manager" name="action_print_bl" type="object" class="oe_highlight"/>
+                    <button string="Imprimir HBL" name="action_print_bl" type="object" class="oe_highlight" groups="modulo_gestion_envio.group_shipping_manager" />
                     
-                    <button string="Exportar Manifiesto (Excel)" name="action_export_manifest_excel" type="object" class="oe_highlight"  icon="fa-file-excel-o"/>
+                    <button string="Exportar Manifiesto (Excel)" name="action_export_manifest_excel" type="object" class="oe_highlight" icon="fa-file-excel-o"/>
                     
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirmed"/>
                 </header>

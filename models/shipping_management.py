@@ -177,12 +177,12 @@ class ShippingManagement(models.Model):
     def action_print_bl(self):
         """ Retorna la acción para imprimir el BL, abriendo el PDF en una nueva pestaña """
         self.ensure_one()
-        return True # BLOQUEO TEMPORAL
+        # BLOQUEO TEMPORAL return True
         return self.env.ref('modulo_gestion_envio.action_report_shipping_bl').report_action(self)
 
     def action_export_manifest_excel(self):
         self.ensure_one()
-        return True # BLOQUEO TEMPORAL
+        # BLOQUEO TEMPORAL return True 
 
         # Crear el archivo Excel en memoria
         output = io.BytesIO()
