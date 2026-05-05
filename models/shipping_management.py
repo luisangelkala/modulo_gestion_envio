@@ -64,8 +64,13 @@ class ShippingManagement(models.Model):
 
     # --- Lógica de Filtrado en Pantalla ---
     line_search = fields.Char(string='Buscar en líneas', store=False) # Campo temporal para escribir
-    line_ids_display = fields.Many2many('shipping.management.line', string='Líneas Visibles', 
-                                        compute='_compute_line_ids_display', inverse='_inverse_dummy')
+    line_ids_display = fields.One2many(
+        'shipping.management.line',
+        'shipping_id',
+        string='Líneas Visibles',
+        compute='_compute_line_ids_display',
+        inverse='_inverse_dummy',
+    )
 
     @api.depends('line_ids', 'line_search')
     def _compute_line_ids_display(self):

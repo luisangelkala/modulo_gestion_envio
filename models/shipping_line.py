@@ -23,8 +23,13 @@ class ShippingManagementLine(models.Model):
         ('ena', 'ENA')
     ], string='Tipo de Envío', required=True, default='envio')
 
-    # El código se inicializa como 'NUEVO' y se genera formalmente al confirmar el envío (shipping.management)
-    package_code = fields.Char(string='Código Paquete', default='NUEVO', readonly=True, copy=False)
+    # Se genera al crear la línea para que en el popup se vea el código real.
+    package_code = fields.Char(
+        string='Código Paquete',
+        default=lambda self: self.env['ir.sequence'].next_by_code('shipping.management') or 'NUEVO',
+        readonly=True,
+        copy=False
+    )
     
     # QR Code generado en backend para alta calidad en PDF
     qr_image = fields.Binary(string="QR Code", compute="_compute_qr_image")
@@ -104,8 +109,9 @@ class ShippingManagementLine(models.Model):
                 if line.shipping_type == 'ena' and line.customer_id:
                     line._recompute_ena_package_codes(line.shipping_id.id, line.customer_id.id)
                 elif 'shipping_type' in vals and vals['shipping_type'] != 'ena':
-                    # Si deja de ser ENA, vuelve a estado NUEVO para ser procesado por la secuencia normal
-                    super(ShippingManagementLine, line).write({'package_code': 'NUEVO'})
+                    # Si deja de ser ENA, reasigna un código normal.
+                    new_code = self.env['ir.sequence'].next_by_code('shipping.management') or 'NUEVO'
+                    super(ShippingManagementLine, line).write({'package_code': new_code})
         return res
 
     def unlink(self):
@@ -138,7 +144,7 @@ class ShippingManagementLine(models.Model):
             return
 
         # Intentar recuperar un código base ya asignado al grupo o generar uno nuevo
-        base_code = next((l.package_code.split(' BULTO ')[0] for l in lines if l.package_code and l.package_code != 'NUEVO'), False)
+        base_code = next((l.package_code.split(' BULTO ')[0] for l in lines if l.package_code and ' BULTO ' in l.package_code), False)
         if not base_code:
             base_code = self.env['ir.sequence'].next_by_code('shipping.management')
 
