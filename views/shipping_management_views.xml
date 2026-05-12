@@ -5,11 +5,11 @@
         <field name="name">shipping.reference.catalog.tree</field>
         <field name="model">shipping.reference.catalog</field>
         <field name="arch" type="xml">
-            <tree string="Catálogo de Referencias" editable="bottom">
+            <list string="Catálogo de Referencias" editable="bottom">
                 <field name="name"/>
                 <field name="transport_type"/>
                 <field name="active" widget="boolean_toggle"/>
-            </tree>
+            </list>
         </field>
     </record>
 
@@ -17,7 +17,7 @@
     <record id="action_shipping_reference_catalog_air" model="ir.actions.act_window">
         <field name="name">Guías Aéreas</field>
         <field name="res_model">shipping.reference.catalog</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="domain">[('transport_type', '=', 'air')]</field>
         <field name="context">{'default_transport_type': 'air'}</field>
     </record>
@@ -26,7 +26,7 @@
     <record id="action_shipping_reference_catalog_sea" model="ir.actions.act_window">
         <field name="name">Manifiestos Marítimos</field>
         <field name="res_model">shipping.reference.catalog</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="domain">[('transport_type', '=', 'sea')]</field>
         <field name="context">{'default_transport_type': 'sea'}</field>
     </record>
@@ -95,7 +95,7 @@
                             <field name="line_search" placeholder="🔍 Escriba para filtrar por Código, Cliente, Remitente o Destinatario..." class="mb-2"/>
                             <field name="line_ids_display" widget="one2many" context="{'default_shipping_id': id}" readonly="state == 'confirmed'">
                                 <!-- Vista de Lista (resumen) -->
-                                <tree>
+                                <list>
                                     <control>
                                         <create name="add_line_control" string="Agregar nuevo envío"/>
                                     </control>
@@ -109,7 +109,7 @@
                                     <field name="weight" sum="Total Peso"/>
                                     <field name="volume" sum="Total Volumen"/>
                                     <button name="action_duplicate_line" type="object" icon="fa-copy" title="Duplicar Línea"/>
-                                </tree>
+                                </list>
                                 <!-- Vista de Formulario (popup modal) -->
                                 <form>
                                     <sheet>
@@ -154,7 +154,7 @@
         <field name="name">shipping.management.tree</field>
         <field name="model">shipping.management</field>
         <field name="arch" type="xml">
-            <tree string="Envíos" decoration-muted="state == 'confirmed'" decoration-info="state == 'draft'">
+            <list string="Envíos" decoration-muted="state == 'confirmed'" decoration-info="state == 'draft'">
                 <field name="name"/>
                 <field name="date_shipping"/>
                 <field name="transport_type" widget="badge" decoration-success="transport_type == 'sea'" decoration-warning="transport_type == 'air'"/>
@@ -162,14 +162,14 @@
                 <field name="total_packages" sum="Total Bultos"/>
                 <field name="total_weight" sum="Total Peso"/>
                 <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'confirmed'"/>
-            </tree>
+            </list>
         </field>
     </record>
 
     <record id="action_shipping_management" model="ir.actions.act_window">
         <field name="name">Gestión de Envíos</field>
         <field name="res_model">shipping.management</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <menuitem id="menu_shipping_management_act" 

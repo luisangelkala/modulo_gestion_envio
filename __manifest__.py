@@ -1,6 +1,6 @@
 {
     'name': 'Gestión de Envio (Logística)',
-    'version': '17.0.1.0.0',
+    'version': '19.0.1.0.0',
     'category': 'Logistics',
     'summary': 'Gestión de envíos Aéreos y Marítimos',
     'description': """

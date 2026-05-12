@@ -1,6 +1,6 @@
-# Módulo de Gestión de Envío (v17.0 Community)
+# Módulo de Gestión de Envío (v19.0 Community)
 
-Este módulo está diseñado para centralizar y automatizar la operación logística de envíos internacionales (Aéreos y Marítimos) dentro de **Odoo 17 Community**. Sustituye el manejo de datos en hojas de cálculo por un sistema robusto con validaciones de carga, gestión de seguridad por roles y generación masiva de documentación legal y etiquetas.
+Este módulo está diseñado para centralizar y automatizar la operación logística de envíos internacionales (Aéreos y Marítimos) dentro de **Odoo 19 Community**. Sustituye el manejo de datos en hojas de cálculo por un sistema robusto con validaciones de carga, gestión de seguridad por roles y generación masiva de documentación legal y etiquetas.
 
 ---
 
@@ -65,5 +65,5 @@ El módulo incluye 4 tipos de contenedores predefinidos. Puedes ajustar sus capa
 ---
 
 **Versión:** 1.0  
-**Compatibilidad:** Odoo 17.0 Community Edition  
+**Compatibilidad:** Odoo 19.0 Community Edition  
 **Tecnología:** Python, XML, PostgreSQL, QWeb Reports.
