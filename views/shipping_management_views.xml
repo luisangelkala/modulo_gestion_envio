@@ -92,8 +92,7 @@
                     </group>
                     <notebook>
                         <page string="Líneas de Carga" name="lines">
-                            <field name="line_search" placeholder="🔍 Escriba para filtrar por Código, Cliente, Remitente o Destinatario..." class="mb-2"/>
-                            <field name="line_ids_display" widget="one2many" context="{'default_shipping_id': id}" readonly="state == 'confirmed'">
+                            <field name="line_ids" widget="one2many" context="{'default_shipping_id': id}" readonly="state == 'confirmed'">
                                 <!-- Vista de Lista (resumen) -->
                                 <list>
                                     <control>
@@ -141,11 +140,7 @@
                         </page>
                     </notebook>
                 </sheet>
-                <div class="oe_chatter">
-                    <field name="message_follower_ids"/>
-                    <field name="activity_ids"/>
-                    <field name="message_ids"/>
-                </div>
+                <chatter/>
             </form>
         </field>
     </record>
