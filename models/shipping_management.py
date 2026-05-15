@@ -91,24 +91,6 @@ class ShippingManagement(models.Model):
         # Necesario para que el campo computed sea editable y permita agregar líneas
         pass
 
-    @api.onchange('line_search')
-    def _onchange_line_search(self):
-        """Filtro dinámico de líneas sobre el one2many real (Odoo 19)."""
-        search = (self.line_search or '').strip()
-        if not search:
-            return {'domain': {'line_ids': []}}
-        return {
-            'domain': {
-                'line_ids': [
-                    '|', '|', '|',
-                    ('package_code', 'ilike', search),
-                    ('customer_id.name', 'ilike', search),
-                    ('sender_id.name', 'ilike', search),
-                    ('receiver_id.name', 'ilike', search),
-                ]
-            }
-        }
-
     # Smart Stats (Computados)
     total_packages = fields.Integer(string='Total Bultos', compute='_compute_smart_stats', store=True)
     total_weight = fields.Float(string='Peso Total (Kg)', compute='_compute_smart_stats', store=True)

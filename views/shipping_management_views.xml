@@ -93,7 +93,7 @@
                     <notebook>
                         <page string="Líneas de Carga" name="lines">
                             <field name="line_search" placeholder="🔍 Escriba para filtrar por Código, Cliente, Remitente o Destinatario..." class="mb-2"/>
-                            <field name="line_ids" widget="one2many" context="{'default_shipping_id': id}" readonly="state == 'confirmed'">
+                            <field name="line_ids" widget="one2many" context="{'default_shipping_id': id}" readonly="state == 'confirmed'" invisible="line_search">
                                 <!-- Vista de Lista (resumen) -->
                                 <list>
                                     <control>
@@ -137,6 +137,19 @@
                                         </group>
                                     </sheet>
                                 </form>
+                            </field>
+                            <field name="line_ids_display" widget="one2many" readonly="1" invisible="not line_search">
+                                <list>
+                                    <field name="print_selected" widget="boolean_toggle" string="Imp."/>
+                                    <field name="package_code"/>
+                                    <field name="customer_id"/>
+                                    <field name="sender_id"/>
+                                    <field name="receiver_id"/>
+                                    <field name="description"/>
+                                    <field name="packages_qty" sum="Total Bultos"/>
+                                    <field name="weight" sum="Total Peso"/>
+                                    <field name="volume" sum="Total Volumen"/>
+                                </list>
                             </field>
                         </page>
                     </notebook>
