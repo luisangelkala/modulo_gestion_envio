@@ -95,18 +95,38 @@ class ShippingManagementLine(models.Model):
     def _onchange_shipping_type(self):
         if self.shipping_type != 'ena':
             self.ena_parent_id = False
+            return {'domain': {'ena_parent_id': [('id', '=', 0)]}}
+        return {'domain': {'ena_parent_id': self._domain_ena_candidates()}}
 
     @api.onchange('ena_parent_id')
     def _onchange_ena_parent_id(self):
         if self.shipping_type != 'ena':
             self.ena_parent_id = False
-            return
+            return {'domain': {'ena_parent_id': [('id', '=', 0)]}}
 
         if self.ena_parent_id:
             self.package_code = self.ena_parent_id.package_code
         elif self._origin and self._origin.ena_parent_id:
             # Si se despega de un ENA existente, pasa a ENA padre con nuevo codigo.
             self.package_code = self._next_package_code()
+        return {'domain': {'ena_parent_id': self._domain_ena_candidates()}}
+
+    @api.onchange('shipping_id')
+    def _onchange_shipping_id(self):
+        if self.shipping_type == 'ena':
+            return {'domain': {'ena_parent_id': self._domain_ena_candidates()}}
+        return {'domain': {'ena_parent_id': [('id', '=', 0)]}}
+
+    def _domain_ena_candidates(self):
+        """Domino dinámico para ENA existente en el manifiesto actual."""
+        self.ensure_one()
+        if not self.shipping_id:
+            return [('id', '=', 0)]
+
+        candidates = self.shipping_id.line_ids.filtered(
+            lambda l: l.shipping_type == 'ena' and not l.ena_parent_id and l != self
+        )
+        return [('id', 'in', candidates.ids)] if candidates else [('id', '=', 0)]
 
     @api.constrains('ena_parent_id', 'shipping_type', 'shipping_id')
     def _check_ena_parent_rules(self):

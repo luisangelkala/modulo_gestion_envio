@@ -117,9 +117,11 @@
                                                 <field name="sender_id" required="1"/>
                                                 <field name="receiver_id" required="1"/>
                                                 <field name="shipping_type"/>
+                                                <span class="badge bg-success ms-1"
+                                                      style="font-size: 10px;"
+                                                      invisible="shipping_type != 'ena'">ENA</span>
                                                 <field name="ena_parent_id"
                                                        invisible="shipping_type != 'ena'"
-                                                       domain="[('shipping_id', '=', context.get('default_shipping_id')), ('shipping_type', '=', 'ena'), ('ena_parent_id', '=', False), ('id', '!=', id)]"
                                                        options="{'no_create': True, 'no_open': True}"/>
                                             </group>
                                             <group string="Detalle de Carga">
