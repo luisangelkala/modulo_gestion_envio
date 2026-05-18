@@ -8,6 +8,7 @@ from io import BytesIO
 class ShippingManagementLine(models.Model):
     _name = 'shipping.management.line'
     _description = 'Linea de Envio'
+    _rec_name = 'package_code'
 
     shipping_id = fields.Many2one('shipping.management', string='Envio', ondelete='cascade')
 
@@ -37,6 +38,7 @@ class ShippingManagementLine(models.Model):
 
     is_ena_child = fields.Boolean(string='Es ENA Hijo', compute='_compute_ena_flags')
     is_ena_parent = fields.Boolean(string='Es ENA Padre', compute='_compute_ena_flags')
+    ena_tag = fields.Char(string='ENA', compute='_compute_ena_tag')
 
     # Se genera al crear la linea para mostrar el codigo real en popup.
     package_code = fields.Char(
@@ -66,6 +68,11 @@ class ShippingManagementLine(models.Model):
         for line in self:
             line.is_ena_child = bool(line.ena_parent_id)
             line.is_ena_parent = bool(line.ena_child_ids)
+
+    @api.depends('shipping_type')
+    def _compute_ena_tag(self):
+        for line in self:
+            line.ena_tag = 'ENA' if line.shipping_type == 'ena' else False
 
     @api.depends('package_code')
     def _compute_qr_image(self):
@@ -118,12 +125,16 @@ class ShippingManagementLine(models.Model):
         return {'domain': {'ena_parent_id': [('id', '=', 0)]}}
 
     def _domain_ena_candidates(self):
-        """Domino dinámico para ENA existente en el manifiesto actual."""
+        """Dominio dinamico para ENA existente en el manifiesto actual."""
         self.ensure_one()
-        if not self.shipping_id:
+        shipping = self.shipping_id
+        if not shipping and self.env.context.get('default_shipping_id'):
+            shipping = self.env['shipping.management'].browse(self.env.context.get('default_shipping_id')).exists()
+
+        if not shipping:
             return [('id', '=', 0)]
 
-        candidates = self.shipping_id.line_ids.filtered(
+        candidates = shipping.line_ids.filtered(
             lambda l: l.shipping_type == 'ena' and not l.ena_parent_id and l != self
         )
         return [('id', 'in', candidates.ids)] if candidates else [('id', '=', 0)]

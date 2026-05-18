@@ -92,12 +92,13 @@
                     <notebook>
                         <page string="Líneas de Carga" name="lines">
                             <field name="line_search" placeholder="Escriba para filtrar por Código, Cliente, Remitente o Destinatario..." class="mb-2"/>
-                            <field name="line_ids" widget="one2many" context="{'default_shipping_id': id}" readonly="state == 'confirmed'" invisible="line_search">
+                            <field name="line_ids" widget="one2many" context="{'default_shipping_id': id, 'shipping_id': id}" readonly="state == 'confirmed'" invisible="line_search">
                                 <list>
                                     <control>
                                         <create name="add_line_control" string="Agregar nuevo envío"/>
                                     </control>
                                     <field name="print_selected" widget="boolean_toggle" string="Imp."/>
+                                    <field name="ena_tag" widget="badge" string="" decoration-success="ena_tag == 'ENA'"/>
                                     <field name="package_code"/>
                                     <field name="customer_id"/>
                                     <field name="sender_id"/>
@@ -117,9 +118,6 @@
                                                 <field name="sender_id" required="1"/>
                                                 <field name="receiver_id" required="1"/>
                                                 <field name="shipping_type"/>
-                                                <span class="badge bg-success ms-1"
-                                                      style="font-size: 10px;"
-                                                      invisible="shipping_type != 'ena'">ENA</span>
                                                 <field name="ena_parent_id"
                                                        invisible="shipping_type != 'ena'"
                                                        options="{'no_create': True, 'no_open': True}"/>
@@ -144,6 +142,7 @@
                             <field name="line_ids_display" widget="one2many" readonly="1" invisible="not line_search">
                                 <list>
                                     <field name="print_selected" widget="boolean_toggle" string="Imp."/>
+                                    <field name="ena_tag" widget="badge" string="" decoration-success="ena_tag == 'ENA'"/>
                                     <field name="package_code"/>
                                     <field name="customer_id"/>
                                     <field name="sender_id"/>
