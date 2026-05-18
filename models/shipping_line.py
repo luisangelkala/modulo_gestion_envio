@@ -29,7 +29,7 @@ class ShippingManagementLine(models.Model):
     ena_parent_id = fields.Many2one(
         'shipping.management.line',
         string='ENA Existente',
-        domain="[('shipping_id', '=', shipping_id), ('shipping_type', '=', 'ena'), ('ena_parent_id', '=', False), ('id', '!=', id)]",
+        domain="[('shipping_type', '=', 'ena'), ('ena_parent_id', '=', False), ('id', '!=', id)]",
         ondelete='set null',
         help='Seleccione un ENA existente para que esta linea use su codigo de paquete.',
     )
