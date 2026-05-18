@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Vistas para el Catálogo de Referencias (Configuración) -->
+    <!-- Vistas para el CatÃ¡logo de Referencias (ConfiguraciÃ³n) -->
     <record id="view_shipping_reference_catalog_tree" model="ir.ui.view">
         <field name="name">shipping.reference.catalog.tree</field>
         <field name="model">shipping.reference.catalog</field>
         <field name="arch" type="xml">
-            <list string="Catálogo de Referencias" editable="bottom">
+            <list string="CatÃ¡logo de Referencias" editable="bottom">
                 <field name="name"/>
                 <field name="transport_type"/>
                 <field name="active" widget="boolean_toggle"/>
@@ -13,18 +13,18 @@
         </field>
     </record>
 
-    <!-- Acción: Guías Aéreas -->
+    <!-- AcciÃ³n: GuÃ­as AÃ©reas -->
     <record id="action_shipping_reference_catalog_air" model="ir.actions.act_window">
-        <field name="name">Guías Aéreas</field>
+        <field name="name">GuÃ­as AÃ©reas</field>
         <field name="res_model">shipping.reference.catalog</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('transport_type', '=', 'air')]</field>
         <field name="context">{'default_transport_type': 'air'}</field>
     </record>
 
-    <!-- Acción: Manifiestos Marítimos -->
+    <!-- AcciÃ³n: Manifiestos MarÃ­timos -->
     <record id="action_shipping_reference_catalog_sea" model="ir.actions.act_window">
-        <field name="name">Manifiestos Marítimos</field>
+        <field name="name">Manifiestos MarÃ­timos</field>
         <field name="res_model">shipping.reference.catalog</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[('transport_type', '=', 'sea')]</field>
@@ -35,12 +35,12 @@
         <field name="name">shipping.management.form</field>
         <field name="model">shipping.management</field>
         <field name="arch" type="xml">
-            <form string="Gestión de Envío">
+            <form string="GestiÃ³n de EnvÃ­o">
                 <header>
                     <!-- Botones en modo "Solo Lectura" (Sin name ni type) -->
                     <button string="Confirmar" name="action_confirm" type="object" class="oe_highlight" 
                             invisible="state != 'draft'" groups="modulo_gestion_envio.group_shipping_manager"
-                            confirm="¿Está seguro que desea confirmar este envío? Esta acción es irreversible."/>
+                            confirm="Â¿EstÃ¡ seguro que desea confirmar este envÃ­o? Esta acciÃ³n es irreversible."/>
                     
                     <button string="Imprimir Etiquetas" name="%(modulo_gestion_envio.action_report_shipping_labels)d" type="action" class="btn-secondary"/>
                     
@@ -62,14 +62,14 @@
                             <field name="total_weight" widget="statinfo" string="Kg Total"/>
                         </button>
                         <button name="action_dummy" type="object" class="oe_stat_button" icon="fa-cube">
-                            <field name="total_volume" widget="statinfo" string="m³ Total"/>
+                            <field name="total_volume" widget="statinfo" string="mÂ³ Total"/>
                         </button>
                     </div>
                     <div class="oe_title">
                         <label for="reference_id" class="oe_edit_only" string="Referencia"/>
                         <h1>
                             <field name="reference_id" options="{'no_create': True, 'no_open': True}" 
-                                   placeholder="Seleccione Guía o Manifiesto..." 
+                                   placeholder="Seleccione GuÃ­a o Manifiesto..." 
                                    domain="[('transport_type', '=', transport_type)]"
                                    readonly="state == 'confirmed'" required="1"/>
                         </h1>
@@ -91,13 +91,13 @@
                         </group>
                     </group>
                     <notebook>
-                        <page string="Líneas de Carga" name="lines">
-                            <field name="line_search" placeholder="🔍 Escriba para filtrar por Código, Cliente, Remitente o Destinatario..." class="mb-2"/>
+                        <page string="LÃ­neas de Carga" name="lines">
+                            <field name="line_search" placeholder="ðŸ” Escriba para filtrar por CÃ³digo, Cliente, Remitente o Destinatario..." class="mb-2"/>
                             <field name="line_ids" widget="one2many" context="{'default_shipping_id': id}" readonly="state == 'confirmed'" invisible="line_search">
                                 <!-- Vista de Lista (resumen) -->
                                 <list>
                                     <control>
-                                        <create name="add_line_control" string="Agregar nuevo envío"/>
+                                        <create name="add_line_control" string="Agregar nuevo envÃ­o"/>
                                     </control>
                                     <field name="print_selected" widget="boolean_toggle" string="Imp."/>
                                     <field name="package_code"/>
@@ -108,7 +108,7 @@
                                     <field name="packages_qty" sum="Total Bultos"/>
                                     <field name="weight" sum="Total Peso"/>
                                     <field name="volume" sum="Total Volumen"/>
-                                    <button name="action_duplicate_line" type="object" icon="fa-copy" title="Duplicar Línea"/>
+                                    <button name="action_duplicate_line" type="object" icon="fa-copy" title="Duplicar LÃ­nea"/>
                                 </list>
                                 <!-- Vista de Formulario (popup modal) -->
                                 <form>
@@ -120,9 +120,12 @@
                                                 <field name="sender_id" required="1"/>
                                                 <field name="receiver_id" required="1"/>
                                                 <field name="shipping_type"/>
+                                                <field name="ena_parent_id"
+                                                       invisible="shipping_type != 'ena'"
+                                                       options="{'no_create': True, 'no_open': True}"/>
                                             </group>
                                             <group string="Detalle de Carga">
-                                                <field name="package_code"/>
+                                                <field name="package_code" invisible="shipping_type == 'ena' and ena_parent_id"/>
                                                 <field name="description"/>
                                                 <field name="packages_qty"/>
                                             </group>
@@ -163,7 +166,7 @@
         <field name="name">shipping.management.tree</field>
         <field name="model">shipping.management</field>
         <field name="arch" type="xml">
-            <list string="Envíos" decoration-muted="state == 'confirmed'" decoration-info="state == 'draft'">
+            <list string="EnvÃ­os" decoration-muted="state == 'confirmed'" decoration-info="state == 'draft'">
                 <field name="name"/>
                 <field name="date_shipping"/>
                 <field name="transport_type" widget="badge" decoration-success="transport_type == 'sea'" decoration-warning="transport_type == 'air'"/>
@@ -176,7 +179,7 @@
     </record>
 
     <record id="action_shipping_management" model="ir.actions.act_window">
-        <field name="name">Gestión de Envíos</field>
+        <field name="name">GestiÃ³n de EnvÃ­os</field>
         <field name="res_model">shipping.management</field>
         <field name="view_mode">list,form</field>
     </record>
@@ -187,15 +190,15 @@
               action="action_shipping_management" 
               sequence="10"/>
 
-    <!-- Menús de Configuración -->
+    <!-- MenÃºs de ConfiguraciÃ³n -->
     
     <menuitem id="menu_shipping_config_root"
-              name="Configuración"
+              name="ConfiguraciÃ³n"
               parent="menu_shipping_root"
               sequence="100"/>
 
     <menuitem id="menu_shipping_config_air"
-              name="Guías Aéreas"
+              name="GuÃ­as AÃ©reas"
               parent="menu_shipping_config_root"
               action="action_shipping_reference_catalog_air"/>
 
