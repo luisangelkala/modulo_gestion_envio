@@ -6,26 +6,26 @@ import xlsxwriter
 
 class ShippingReferenceCatalog(models.Model):
     _name = 'shipping.reference.catalog'
-    _description = 'CatÃ¡logo de Referencias'
+    _description = 'Catálogo de Referencias'
     _rec_name = 'name'
 
     name = fields.Char(string='Identificador / Referencia', required=True, help="Ej: MANIFIESTO-2023-001")
     transport_type = fields.Selection([
-        ('air', 'AÃ©reo'),
-        ('sea', 'MarÃ­timo')
+        ('air', 'Aéreo'),
+        ('sea', 'Marítimo')
     ], string='Tipo de Transporte', required=True)
     active = fields.Boolean(default=True, string="Activo")
 
 class ShippingManagement(models.Model):
     _name = 'shipping.management'
-    _description = 'GestiÃ³n de EnvÃ­o'
+    _description = 'Gestión de Envío'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'id desc'
 
     name = fields.Char(string='Referencia', required=True, copy=False, tracking=True)
     
-    reference_id = fields.Many2one('shipping.reference.catalog', string='Referencia (CatÃ¡logo)', 
-                                   help="Seleccione un nÃºmero de referencia del catÃ¡logo", tracking=True)
+    reference_id = fields.Many2one('shipping.reference.catalog', string='Referencia (Catálogo)', 
+                                   help="Seleccione un número de referencia del catálogo", tracking=True)
 
     @api.onchange('reference_id')
     def _onchange_reference_id(self):
@@ -38,15 +38,15 @@ class ShippingManagement(models.Model):
     ], string='Estado', default='draft', tracking=True, required=True)
 
     transport_type = fields.Selection([
-        ('air', 'AÃ©reo'),
-        ('sea', 'MarÃ­timo')
+        ('air', 'Aéreo'),
+        ('sea', 'Marítimo')
     ], string='Tipo de Transporte', required=True, default='sea', tracking=True)
 
-    date_shipping = fields.Date(string='Fecha de EnvÃ­o', default=fields.Date.context_today, tracking=True)
+    date_shipping = fields.Date(string='Fecha de Envío', default=fields.Date.context_today, tracking=True)
     
     # Campos operativos (Excel)
     agencia_origen = fields.Many2one('res.partner', string='Agencia de Origen', tracking=True)
-    pais_id = fields.Many2one('res.country', string='PaÃ­s', tracking=True)
+    pais_id = fields.Many2one('res.country', string='País', tracking=True)
     consignatario_id = fields.Many2one('res.partner', string='Consignatario', tracking=True)
     awb = fields.Char(string='AWB / BL / Contenedor', tracking=True)
 
@@ -54,20 +54,20 @@ class ShippingManagement(models.Model):
     container_type_id = fields.Many2one('shipping.container.type', string='Contenedor', 
         readonly=False) 
     
-    carrier = fields.Many2one('res.partner', string='Naviera / AerolÃ­nea', tracking=True)
+    carrier = fields.Many2one('res.partner', string='Naviera / Aerolínea', tracking=True)
 
-    # Campo de CompaÃ±Ã­a para soporte multi-empresa y reportes
-    company_id = fields.Many2one('res.company', string='CompaÃ±Ã­a', required=True, 
+    # Campo de Compañía para soporte multi-empresa y reportes
+    company_id = fields.Many2one('res.company', string='Compañía', required=True, 
                                  default=lambda self: self.env.company)
 
-    line_ids = fields.One2many('shipping.management.line', 'shipping_id', string='LÃ­neas de EnvÃ­o')
+    line_ids = fields.One2many('shipping.management.line', 'shipping_id', string='Líneas de Envío')
 
-    # --- LÃ³gica de Filtrado en Pantalla ---
-    line_search = fields.Char(string='Buscar en lÃ­neas', store=False) # Campo temporal para escribir
+    # --- Lógica de Filtrado en Pantalla ---
+    line_search = fields.Char(string='Buscar en líneas', store=False) # Campo temporal para escribir
     line_ids_display = fields.One2many(
         'shipping.management.line',
         'shipping_id',
-        string='LÃ­neas Visibles',
+        string='Líneas Visibles',
         compute='_compute_line_ids_display',
         inverse='_inverse_dummy',
     )
@@ -77,7 +77,7 @@ class ShippingManagement(models.Model):
         for rec in self:
             if rec.line_search:
                 s = rec.line_search.lower()
-                # Filtra si el texto coincide con CÃ³digo, Cliente, Remitente o Destinatario
+                # Filtra si el texto coincide con Código, Cliente, Remitente o Destinatario
                 rec.line_ids_display = rec.line_ids.filtered(lambda l: 
                     (l.package_code and s in l.package_code.lower()) or
                     (l.customer_id.name and s in l.customer_id.name.lower()) or
@@ -88,13 +88,13 @@ class ShippingManagement(models.Model):
                 rec.line_ids_display = rec.line_ids
 
     def _inverse_dummy(self):
-        # Necesario para que el campo computed sea editable y permita agregar lÃ­neas
+        # Necesario para que el campo computed sea editable y permita agregar líneas
         pass
 
     # Smart Stats (Computados)
     total_packages = fields.Integer(string='Total Bultos', compute='_compute_smart_stats', store=True)
     total_weight = fields.Float(string='Peso Total (Kg)', compute='_compute_smart_stats', store=True)
-    total_volume = fields.Float(string='Volumen Total (mÂ³)', compute='_compute_smart_stats', store=True)
+    total_volume = fields.Float(string='Volumen Total (m³)', compute='_compute_smart_stats', store=True)
     unique_client_count = fields.Integer(string='Total Clientes', compute='_compute_smart_stats', store=True)
 
     @api.depends('line_ids.weight', 'line_ids.volume', 'line_ids.sender_id', 'line_ids.packages_qty')
@@ -106,31 +106,31 @@ class ShippingManagement(models.Model):
             rec.unique_client_count = len(rec.line_ids.mapped('sender_id'))
 
     def write(self, vals):
-        # Bloqueo estricto de ediciÃ³n si el registro estÃ¡ confirmado
-        # Se permite escribir solo si se estÃ¡ cambiando el estado (por ejemplo, al confirmar)
+        # Bloqueo estricto de edición si el registro está confirmado
+        # Se permite escribir solo si se está cambiando el estado (por ejemplo, al confirmar)
         if 'state' not in vals:
             for rec in self:
                 if rec.state == 'confirmed':
-                    raise ValidationError(_("No se puede modificar un envÃ­o que ya ha sido confirmado (%s).", rec.name))
+                    raise ValidationError(_("No se puede modificar un envío que ya ha sido confirmado (%s).", rec.name))
         return super().write(vals)
 
     def action_confirm(self):
         self.ensure_one()
-        # BLOQUEO TEMPORAL: Retornar sin ejecutar lÃ³gica
+        # BLOQUEO TEMPORAL: Retornar sin ejecutar lógica
         return True
 
         # Validaciones de Reglas de Negocio
         self._check_capacity_rules()
-        # AsignaciÃ³n de cÃ³digos de bulto segÃºn reglas (ENA vs Normal)
+        # Asignación de códigos de bulto según reglas (ENA vs Normal)
         self._assign_package_codes()
         self.write({'state': 'confirmed'})
 
     def _assign_package_codes(self):
         """
-        Asigna los cÃ³digos de bulto finales.
-        - EnvÃ­os normales: secuencia Ãºnica si no tiene.
-        - ENA padre: conserva su cÃ³digo propio.
-        - ENA hija: hereda cÃ³digo del ENA padre seleccionado.
+        Asigna los códigos de bulto finales.
+        - Envíos normales: secuencia única si no tiene.
+        - ENA padre: conserva su código propio.
+        - ENA hija: hereda código del ENA padre seleccionado.
         """
         for rec in self:
             for line in rec.line_ids:
@@ -148,24 +148,24 @@ class ShippingManagement(models.Model):
         """ Valida las reglas de negocio antes de confirmar """
         for rec in self:
             if not rec.line_ids:
-                raise ValidationError(_("No se puede confirmar un envÃ­o sin lÃ­neas de carga."))
+                raise ValidationError(_("No se puede confirmar un envío sin líneas de carga."))
 
-            # Regla AÃ©reo: Max 2500 Kg
+            # Regla Aéreo: Max 2500 Kg
             if rec.transport_type == 'air':
                 if rec.total_weight > 2500:
                     raise ValidationError(_(
-                        "Alerta de Capacidad AÃ©rea: El peso total (%(weight)s kg) excede el lÃ­mite permitido de 2500 kg.",
+                        "Alerta de Capacidad Aérea: El peso total (%(weight)s kg) excede el límite permitido de 2500 kg.",
                         weight=rec.total_weight
                     ))
             
-            # Regla MarÃ­timo: Volumen vs Contenedor
+            # Regla Marítimo: Volumen vs Contenedor
             elif rec.transport_type == 'sea':
                 if not rec.container_type_id:
-                    raise ValidationError(_("Debe seleccionar un Tipo de Contenedor para envÃ­os marÃ­timos."))
+                    raise ValidationError(_("Debe seleccionar un Tipo de Contenedor para envíos marítimos."))
                 
                 if rec.total_volume > rec.container_type_id.capacity_m3:
                     raise ValidationError(_(
-                        "Alerta de Capacidad MarÃ­tima: El volumen total (%(vol)s mÂ³) excede la capacidad del contenedor %(cont)s (%(cap)s mÂ³).",
+                        "Alerta de Capacidad Marítima: El volumen total (%(vol)s m³) excede la capacidad del contenedor %(cont)s (%(cap)s m³).",
                         vol=round(rec.total_volume, 2),
                         cont=rec.container_type_id.name,
                         cap=rec.container_type_id.capacity_m3
@@ -173,15 +173,15 @@ class ShippingManagement(models.Model):
 
     def action_reset_draft(self):
         """ Opcional: Para permitir correcciones si el admin lo requiere, aunque el requisito dice 'solo lectura' """
-        # Se incluye para facilitar pruebas, en producciÃ³n se puede ocultar con permisos
+        # Se incluye para facilitar pruebas, en producción se puede ocultar con permisos
         self.write({'state': 'draft'})
 
     def action_dummy(self):
-        """ MÃ©todo dummy para los Smart Buttons que son solo informativos """
+        """ Método dummy para los Smart Buttons que son solo informativos """
         pass
 
     def action_print_bl(self):
-        """ Retorna la acciÃ³n para imprimir el BL, abriendo el PDF en una nueva pestaÃ±a """
+        """ Retorna la acción para imprimir el BL, abriendo el PDF en una nueva pestaña """
         self.ensure_one()
         # BLOQUEO TEMPORAL return True
         return self.env.ref('modulo_gestion_envio.action_report_shipping_bl').report_action(self)
@@ -198,7 +198,7 @@ class ShippingManagement(models.Model):
         bold_format = workbook.add_format({'bold': True})
         header_format = workbook.add_format({'bold': True, 'bg_color': '#D3D3D3', 'border': 1, 'text_wrap': True, 'valign': 'vcenter'})
         
-        # CÃ¡lculos de totales
+        # Cálculos de totales
         total_envios = len(self.line_ids)
         total_bultos = sum(line.packages_qty for line in self.line_ids)
         total_peso = sum(line.weight for line in self.line_ids)
@@ -207,12 +207,12 @@ class ShippingManagement(models.Model):
         # --- HOJA 1: MANIFIESTO ---
         sheet_man = workbook.add_worksheet('MANIFIESTO')
         
-        # 1. Bloque de informaciÃ³n superior (Filas 0 a 8)
+        # 1. Bloque de información superior (Filas 0 a 8)
         sheet_man.write(0, 0, 'AGENCIA ORIGEN', bold_format)
         sheet_man.write(0, 1, 'ORDAZ')
         
-        sheet_man.write(1, 0, 'PAÃS', bold_format)
-        sheet_man.write(1, 1, 'PANAMÃ')
+        sheet_man.write(1, 0, 'PAÍS', bold_format)
+        sheet_man.write(1, 1, 'PANAMÁ')
         
         sheet_man.write(2, 0, 'CONSIGNATARIO', bold_format)
         sheet_man.write(2, 1, 'Cubanacan Express S.A')
@@ -223,7 +223,7 @@ class ShippingManagement(models.Model):
         sheet_man.write(4, 0, 'CONTENEDOR', bold_format)
         sheet_man.write(4, 1, '') # Dejar en blanco para llenar manual o mapear en el futuro
         
-        sheet_man.write(5, 0, 'TOTAL ENVÃOS', bold_format)
+        sheet_man.write(5, 0, 'TOTAL ENVÍOS', bold_format)
         sheet_man.write(5, 1, total_envios)
         
         sheet_man.write(6, 0, 'TOTAL DE BULTOS', bold_format)
@@ -237,9 +237,9 @@ class ShippingManagement(models.Model):
 
         # 2. Cabeceras de Tabla Manifiesto (Fila 10)
         headers_man = [
-            'No. ENVÃO (HBL)', 'REMITENTE', 'DIRECCIÃ“N REMITENTE', 'DNI/PASAPORTE REMITENTE',
-            'DESTINATARIO', 'DIRECCIÃ“N DESTINATARIO', 'MUNICIPIO', 'PROVINCIA', 
-            'CARNÃ‰ IDENTIDAD', 'TELÃ‰FONO FIJO', 'TELÃ‰FONO MÃ“VIL', 'BULTOS', 
+            'No. ENVÍO (HBL)', 'REMITENTE', 'DIRECCIÓN REMITENTE', 'DNI/PASAPORTE REMITENTE',
+            'DESTINATARIO', 'DIRECCIÓN DESTINATARIO', 'MUNICIPIO', 'PROVINCIA', 
+            'CARNÉ IDENTIDAD', 'TELÉFONO FIJO', 'TELÉFONO MÓVIL', 'BULTOS', 
             'PESO (Kg)', 'MERCANCIA', 'OBSERVACIONES'
         ]
         
@@ -260,14 +260,14 @@ class ShippingManagement(models.Model):
             sheet_man.write(row_man, 0, line.package_code or '')
             sheet_man.write(row_man, 1, line.sender_id.name or '')
             
-            # DirecciÃ³n Remitente (Concatenada)
+            # Dirección Remitente (Concatenada)
             sender_address = f"{line.sender_id.street or ''} {line.sender_id.street2 or ''}".strip()
             sheet_man.write(row_man, 2, sender_address)
             
             sheet_man.write(row_man, 3, line.sender_id.vat or '')
             sheet_man.write(row_man, 4, line.receiver_id.name or '')
             
-            # DirecciÃ³n Destinatario (Concatenada)
+            # Dirección Destinatario (Concatenada)
             receiver_address = f"{line.receiver_id.street or ''} {line.receiver_id.street2 or ''}".strip()
             sheet_man.write(row_man, 5, receiver_address)
             
@@ -275,9 +275,9 @@ class ShippingManagement(models.Model):
             sheet_man.write(row_man, 7, line.receiver_id.state_id.name or '')
             sheet_man.write(row_man, 8, line.receiver_id.vat or '')
             
-            # TelÃ©fonos (Si solo hay uno en Odoo, lo ponemos en mÃ³vil y dejamos fijo vacÃ­o)
-            sheet_man.write(row_man, 9, '') # TelÃ©fono Fijo (Dejar vacÃ­o o mapear si tienes el campo)
-            sheet_man.write(row_man, 10, line.receiver_id.phone or '') # TelÃ©fono MÃ³vil
+            # Teléfonos (Si solo hay uno en Odoo, lo ponemos en móvil y dejamos fijo vacío)
+            sheet_man.write(row_man, 9, '') # Teléfono Fijo (Dejar vacío o mapear si tienes el campo)
+            sheet_man.write(row_man, 10, line.receiver_id.phone or '') # Teléfono Móvil
             
             sheet_man.write(row_man, 11, line.packages_qty or 1)
             sheet_man.write(row_man, 12, line.weight or 0.0)
@@ -285,7 +285,7 @@ class ShippingManagement(models.Model):
             sheet_man.write(row_man, 14, '') # Observaciones
             row_man += 1
 
-        # --- HOJA 2: BOLETA (Se mantiene bÃ¡sica por ahora) ---
+        # --- HOJA 2: BOLETA (Se mantiene básica por ahora) ---
         sheet_bol = workbook.add_worksheet('BOLETA')
         sheet_bol.write(0, 0, 'DETALLE DE BOLETAS', bold_format)
         sheet_bol.write(1, 0, 'TOTAL DE BULTOS:', bold_format)
@@ -310,7 +310,7 @@ class ShippingManagement(models.Model):
         workbook.close()
         output.seek(0)
         
-        # Guardar como adjunto y retornar acciÃ³n de descarga
+        # Guardar como adjunto y retornar acción de descarga
         excel_file = base64.b64encode(output.read())
         attachment = self.env['ir.attachment'].create({
             'name': f'Manifiesto_{self.name}.xlsx',

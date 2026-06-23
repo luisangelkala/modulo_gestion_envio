@@ -42,6 +42,7 @@
                             confirm="¿Está seguro que desea confirmar este envío? Esta acción es irreversible."/>
 
                     <button string="Imprimir Etiquetas" name="%(modulo_gestion_envio.action_report_shipping_labels)d" type="action" class="btn-secondary"/>
+                    <button string="Imprimir QR" name="%(modulo_gestion_envio.action_report_shipping_qr_only)d" type="action" class="btn-secondary"/>
 
                     <button string="Imprimir HBL" name="action_print_bl" type="object" class="oe_highlight" groups="modulo_gestion_envio.group_shipping_manager"/>
 

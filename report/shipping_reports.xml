@@ -28,6 +28,16 @@
             <field name="paperformat_id" ref="modulo_gestion_envio.paperformat_shipping_label"/>
         </record>
 
+        <record id="action_report_shipping_qr_only" model="ir.actions.report">
+            <field name="name">QR Solo</field>
+            <field name="model">shipping.management</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">modulo_gestion_envio.report_shipping_qr_only</field>
+            <field name="report_file">modulo_gestion_envio.report_shipping_qr_only</field>
+            <field name="print_report_name">'QR - %s' % object.name</field>
+            <field name="binding_model_id" eval="False"/>
+            <field name="paperformat_id" ref="modulo_gestion_envio.paperformat_shipping_label"/>
+        </record>
         <record id="paperformat_hbl_strict" model="report.paperformat">
             <field name="name">HBL Strict A4</field>
             <field name="default" eval="True"/>
@@ -113,6 +123,37 @@
             </t>
         </template>
 
+        <template id="report_shipping_qr_only">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-set="lines_to_print" t-value="o.line_ids.filtered(lambda l: l.print_selected) or o.line_ids"/>
+                    <t t-foreach="lines_to_print" t-as="line">
+                        <div class="page" style="width: 100%; height: 99mm; margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; overflow: hidden; page-break-inside: avoid;">
+                            <meta charset="utf-8"/>
+                            <table style="width: 100%; height: 100%; border-collapse: collapse;">
+                                <tr>
+                                    <td style="height: 20%; text-align: center; vertical-align: middle; padding: 3mm 4mm 0 4mm;">
+                                        <h3 style="margin: 0; font-weight: bold; font-size: 20px;">CUBANACAN EXPRESS</h3>
+                                        <h4 style="margin: 2px 0 0 0; font-size: 14px;">ORDAZ INVESTMENT GROUP, S.A.</h4>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="height: 60%; text-align: center; vertical-align: middle;">
+                                        <img t-if="line.qr_image" t-att-src="image_data_uri(line.qr_image)" style="width: 245px; height: 245px; display: inline-block; image-rendering: crisp-edges; image-rendering: pixelated;" alt="QR"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="height: 20%; text-align: center; vertical-align: middle; padding: 0 4mm 4mm 4mm;">
+                                        <div style="font-size: 12px; font-weight: bold; margin-bottom: 3px;">ID</div>
+                                        <div style="font-size: 24px; font-weight: bold; letter-spacing: 1px;" t-esc="line.package_code"/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
         <template id="report_shipping_hbl">
             <t t-call="web.html_container">
                 <div class="page">
