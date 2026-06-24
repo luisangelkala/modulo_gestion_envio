@@ -132,20 +132,13 @@
                             <meta charset="utf-8"/>
                             <table style="width: 100%; height: 100%; border-collapse: collapse;">
                                 <tr>
-                                    <td style="height: 20%; text-align: center; vertical-align: middle; padding: 3mm 4mm 0 4mm;">
-                                        <h3 style="margin: 0; font-weight: bold; font-size: 20px;">CUBANACAN EXPRESS</h3>
-                                        <h4 style="margin: 2px 0 0 0; font-size: 14px;">ORDAZ INVESTMENT GROUP, S.A.</h4>
+                                    <td style="height: 78%; text-align: center; vertical-align: middle; padding: 3mm 4mm 0 4mm;">
+                                        <img t-if="line.qr_image" t-att-src="image_data_uri(line.qr_image)" style="width: 270px; height: 270px; display: inline-block; image-rendering: crisp-edges; image-rendering: pixelated;" alt="QR"/>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="height: 60%; text-align: center; vertical-align: middle;">
-                                        <img t-if="line.qr_image" t-att-src="image_data_uri(line.qr_image)" style="width: 245px; height: 245px; display: inline-block; image-rendering: crisp-edges; image-rendering: pixelated;" alt="QR"/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td style="height: 20%; text-align: center; vertical-align: middle; padding: 0 4mm 4mm 4mm;">
-                                        <div style="font-size: 12px; font-weight: bold; margin-bottom: 3px;">ID</div>
-                                        <div style="font-size: 24px; font-weight: bold; letter-spacing: 1px;" t-esc="line.package_code"/>
+                                    <td style="height: 22%; text-align: center; vertical-align: middle; padding: 0 4mm 4mm 4mm;">
+                                        <div style="font-size: 26px; font-weight: bold; letter-spacing: 1px;" t-esc="line.package_code"/>
                                     </td>
                                 </tr>
                             </table>
